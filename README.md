@@ -119,3 +119,10 @@ Output
     []
 
 The pop command simply takes the top item of the stack and discards it
+
+## Comments
+A comment is a line of text solely for the programmer to read. It is completely ignored by the interpreter.
+
+    // This is a comment
+
+Comments are denoted by two forward slashes
