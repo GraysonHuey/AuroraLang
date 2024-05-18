@@ -1,6 +1,5 @@
 import sys
 
-
 def main():
     stack = []
 
@@ -9,10 +8,14 @@ def main():
         raise Exception("Not an Aurora (.aur) file.")
 
     with open(file, 'r') as filp:
-        if filp.readline().strip() != "START":
+        lines = filp.readlines()
+        if lines[0].strip() != "START":
             raise Exception("Start command not found.")
 
-        for line in filp:
+        if not any(line.strip() == "END" for line in lines):
+            raise Exception("End command not found.")
+
+        for line in lines[1:]:
             stripped_line = line.strip()
 
             if not stripped_line:
@@ -34,6 +37,8 @@ def main():
                     raise Exception("Invalid PUSH command. Usage: PUSH <number>")
 
             elif command_parts[0] == "POP":
+                if not stack:
+                    raise Exception("Stack is empty, cannot POP.")
                 stack.pop()
 
             elif command_parts[0] == "ADD":
@@ -46,8 +51,8 @@ def main():
             elif command_parts[0] == "SUB":
                 if len(stack) < 2:
                     raise Exception("Not enough values on the stack to perform SUB.")
-                num1 = stack.pop()
                 num2 = stack.pop()
+                num1 = stack.pop()
                 stack.append(num1 - num2)
 
             elif command_parts[0] == "MUL":
@@ -60,8 +65,8 @@ def main():
             elif command_parts[0] == "DIV":
                 if len(stack) < 2:
                     raise Exception("Not enough values on the stack to perform DIV.")
-                num1 = stack.pop()
                 num2 = stack.pop()
+                num1 = stack.pop()
                 if num2 == 0:
                     raise Exception("Cannot divide by zero.")
                 stack.append(num1 / num2)
@@ -80,6 +85,11 @@ def main():
                 if argument.strip() == "TOP":
                     if stack:
                         print(stack[-1])
+                    else:
+                        raise Exception("Stack is empty, nothing to display.")
+                elif argument.strip() == "STACK":
+                    if stack:
+                        print(stack)
                     else:
                         raise Exception("Stack is empty, nothing to display.")
                 else:
