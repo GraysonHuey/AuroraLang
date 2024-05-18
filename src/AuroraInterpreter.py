@@ -210,6 +210,8 @@ def main():
             # Uncomment the next line to print the stack after each command for debugging
             # print(f"Stack: {stack}")
 
+    input("Press enter to exit...")
+
 
 if __name__ == "__main__":
     main()
