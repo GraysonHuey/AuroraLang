@@ -102,3 +102,20 @@ Note that modulus takes the second item down in the stack, divides it by the top
 Also, trying to mod by 0 will cause an error
 
 ## Removing items from the stack
+Code
+
+    START
+    
+	PUSH 5
+	DISPLAY STACK
+	POP
+	DISPLAY STACK
+	
+	END
+
+Output
+
+    [5]
+    []
+
+The pop command simply takes the top item of the stack and discards it
