@@ -74,8 +74,8 @@ def main():
             elif command_parts[0] == "MOD":
                 if len(stack) < 2:
                     raise Exception("Not enough values on the stack to perform MOD.")
-                num1 = stack.pop()
                 num2 = stack.pop()
+                num1 = stack.pop()
                 if num2 == 0:
                     raise Exception("Cannot divide by zero.")
                 stack.append(num1 % num2)
@@ -86,12 +86,12 @@ def main():
                     if stack:
                         print(stack[-1])
                     else:
-                        raise Exception("Stack is empty, nothing to display.")
+                        raise Exception("Stack is empty, cannot DISPLAY.")
                 elif argument.strip() == "STACK":
                     if stack:
                         print(stack)
                     else:
-                        raise Exception("Stack is empty, nothing to display.")
+                        print("[]")
                 else:
                     print(argument)
 
