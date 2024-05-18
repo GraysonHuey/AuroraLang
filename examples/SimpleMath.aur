@@ -1,0 +1,40 @@
+START
+
+PUSH 5
+PUSH 10
+ADD
+DISPLAY 5 + 10 =
+DISPLAY TOP
+
+// Empty lines for readability
+DISPLAY
+DISPLAY
+
+PUSH 8
+PUSH 16
+SUB
+DISPLAY 8 - 16 =
+DISPLAY TOP
+
+// Empty lines for readability
+DISPLAY
+DISPLAY
+
+PUSH 12
+PUSH 5
+MUL
+DISPLAY 12 * 5 =
+DISPLAY TOP
+
+// Empty lines for readability
+DISPLAY
+DISPLAY
+
+PUSH 18
+PUSH 4
+DIV
+DISPLAY 18 / 4 =
+DISPLAY TOP
+
+
+END
