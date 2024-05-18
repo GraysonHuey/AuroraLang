@@ -1,0 +1,28 @@
+START
+// Determine if num1 % num2 = 0
+
+DISPLAY Enter number 1
+READ
+
+DISPLAY
+DISPLAY
+
+DISPLAY Enter number 2
+READ
+
+MOD
+
+JZ 18
+JUMP 23
+
+DISPLAY
+DISPLAY
+DISPLAY Number 1 is divisible by number 2!
+JUMP 27
+
+DISPLAY
+DISPLAY
+DISPLAY Number 1 is NOT divisible by number 2!
+JUMP 27
+
+END
