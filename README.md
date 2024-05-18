@@ -1,7 +1,8 @@
 # Aurora Language
 ## Welcome!
 ## Aurora is a very simple interpreted stack-based language to start my exploration of how programming languages work. As this is a very simple language, not much can be done in it, but to see some use cases, check out our examples below!
-
+<br></br>
+<br></br>
 # Examples
 
 ## Addition
