@@ -3,6 +3,54 @@
 Aurora is a very simple interpreted stack-based language to start my exploration of how programming languages work. As this is a very simple language, not much can be done in it, but to see some use cases, check out our examples below!
 <br></br>
 <br></br>
+# Quick Reference
+
+    START & END → Required at the beginning and end of the Aurora file
+    
+    PUSH {value} → Pushes a number to the top of the stack
+    
+    POP → Discards the top element of the stack
+    
+    ADD → Removes the top two elements of the stack, adds them, and inserts the result onto the stack
+    
+    SUB → Removes the top two elements of the stack, subtracts the top from the number underneath it, and inserts the result onto the stack
+
+	MUL → Removes the top two elements of the stack, multiplies them, and inserts the result onto the stack
+
+	DIV → Removes the top two elements of the stack, divides the one underneath by the top, and inserts the result onto the stack
+
+	MOD → Removes the top two elements of the stack, divides the one underneath by the top, and inserts the remainer onto the stack
+
+	DISPLAY {value} → Prints the specified value. Can print the top of the stack, entire stack, or a string
+
+	READ → Gets an integer input from the user and inserts it onto the top of the stack
+
+	EQ → Inserts a 1 to the top of the stack if the current top two values are equal (otherwise, 0 is inserted)
+
+	NEQ → Inserts a 0 to the top of the stack if the current top two values are not equal (otherwise, 1 is inserted)
+
+	GT → Inserts a 1 to the top of the stack if the current top value is greater than the value of the item below it (otherwise, 0 is inserted)
+
+	LT → Inserts a 1 to the top of the stack if the current top value is less than the value of the item below it (otherwise, 0 is inserted)
+
+	AND → Performs an AND operation on the top two elements of the stack and inserts the result
+	
+	OR → Performs an OR operation on the top two elements of the stack and inserts the result
+
+	NOT → Performs a NOT operation on the top element of the stack and inserts the result
+
+	INC → Increments the top element of the stack
+
+	DEC → Decrements the top element of the stack
+
+	JUMP {line num} → Jumps to the specified line number
+
+	JZ {line num} → Jumps to the specified line number if the top element of the stack is 0
+
+	JNZ {line num} → Jumps to the specified line number if the top element of the stack is not 0
+
+<br></br>
+<br></br>
 # Examples/Documentation
 
 ## Addition
