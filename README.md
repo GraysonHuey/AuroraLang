@@ -1,6 +1,10 @@
 # Welcome to the Aurora programming language!
 Aurora is a very simple interpreted stack-based language to start my exploration of how programming languages work. As this is a very simple language, not much can be done in it, but to see some use cases, check out our examples below!
 <br></br>
+What am I doing next?
+<br></br>
+My next step is to add a couple more commands to this language, and then I'll probably convert the python interpreter into a C/C++ implementation. then, I'll start working on creating a compiled language using C/C++ (idk which one yet)
+<br></br>
 <br></br>
 # Quick Reference
 
