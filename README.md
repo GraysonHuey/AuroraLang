@@ -10,6 +10,8 @@ Aurora is a very simple interpreted stack-based language to start my exploration
     
     POP → Discards the top element of the stack
     
+    (NOT IMPLEMENTED) CLEAR → Remove all elements from the stack
+
     ADD → Removes the top two elements of the stack, adds them, and inserts the result onto the stack
     
     SUB → Removes the top two elements of the stack, subtracts the top from the number underneath it, and inserts the result onto the stack
