@@ -35,23 +35,34 @@ def main():
             command = command_parts[0]
 
             match command:
-                case "PUSH":
+                case "PUSHINT":
                     try:
                         num = int(command_parts[1])
                         stack.append(num)
                     except (ValueError, IndexError):
                         raise Exception("Invalid PUSH command. Usage: PUSH <number>")
 
+                case "PUSHSTR":
+                    string = ' '.join(command_parts[1:])
+                    stack.append(string)
+
                 case "POP":
                     if not stack:
                         raise Exception("Stack is empty, cannot POP.")
                     stack.pop()
+
+                case "CLEAR":
+                    if not stack:
+                        raise Exception("Stack is already empty, cannot CLEAR")
+                    stack.clear()
 
                 case "ADD":
                     if len(stack) < 2:
                         raise Exception("Not enough values on the stack to perform ADD.")
                     num1 = stack.pop()
                     num2 = stack.pop()
+                    if isinstance(num1, str) or isinstance(num1, str):
+                        raise Exception("Cannot add an INT and a STR")
                     stack.append(num1 + num2)
 
                 case "SUB":
@@ -59,6 +70,8 @@ def main():
                         raise Exception("Not enough values on the stack to perform SUB.")
                     num2 = stack.pop()
                     num1 = stack.pop()
+                    if isinstance(num1, str) or isinstance(num1, str):
+                        raise Exception("Cannot subtract an INT and a STR")
                     stack.append(num1 - num2)
 
                 case "MUL":
@@ -66,6 +79,8 @@ def main():
                         raise Exception("Not enough values on the stack to perform MUL.")
                     num1 = stack.pop()
                     num2 = stack.pop()
+                    if isinstance(num1, str) or isinstance(num1, str):
+                        raise Exception("Cannot multiply an INT and a STR")
                     stack.append(num1 * num2)
 
                 case "DIV":
@@ -73,6 +88,8 @@ def main():
                         raise Exception("Not enough values on the stack to perform DIV.")
                     num2 = stack.pop()
                     num1 = stack.pop()
+                    if isinstance(num1, str) or isinstance(num1, str):
+                        raise Exception("Cannot divide an INT and a STR")
                     if num2 == 0:
                         raise Exception("Cannot divide by zero.")
                     stack.append(num1 / num2)
@@ -82,6 +99,8 @@ def main():
                         raise Exception("Not enough values on the stack to perform MOD.")
                     num2 = stack.pop()
                     num1 = stack.pop()
+                    if isinstance(num1, str) or isinstance(num1, str):
+                        raise Exception("Cannot divide an INT and a STR")
                     if num2 == 0:
                         raise Exception("Cannot divide by zero.")
                     stack.append(num1 % num2)
@@ -152,19 +171,26 @@ def main():
                 case "INC":
                     if not stack:
                         raise Exception("Stack is empty, cannot perform INC")
+                    if isinstance(stack[-1], str):
+                        raise Exception("Cannot increment a STR")
                     stack[-1] += 1
 
                 case "DEC":
                     if not stack:
                         raise Exception("Stack is empty, cannot perform DEC")
+                    if isinstance(stack[-1], str):
+                        raise Exception("Cannot decrement a STR")
                     stack[-1] -= 1
 
-                case "READ":
+                case "READINT":
                     try:
                         num = int(input())
                         stack.append(num)
                     except ValueError:
                         raise Exception("Invalid input. Expected an integer")
+
+                case "READSTR":
+                    stack.append(input())
 
                 case "JUMP":
                     try:
@@ -179,7 +205,7 @@ def main():
                 case "JZ":
                     if not stack:
                         raise Exception("Stack is empty, cannot perform JZ.")
-                    num = stack.pop()
+                    num = stack[-1]
                     if num == 0:
                         try:
                             line_num = int(command_parts[1])
@@ -193,7 +219,7 @@ def main():
                 case "JNZ":
                     if not stack:
                         raise Exception("Stack is empty, cannot perform JNZ")
-                    num = stack.pop()
+                    num = stack[-1]
                     if num != 0:
                         try:
                             line_num = int(command_parts[1])
@@ -203,6 +229,13 @@ def main():
                             continue
                         except (ValueError, IndexError):
                             raise Exception("Invalid JNZ command. Usage: JNZ <line_number>")
+
+                case "SWAP":
+                    if not stack:
+                        raise Exception("Stack is empty, cannot perform SWAP")
+                    if len(stack) < 2:
+                        raise Exception("Not enough values on the stack to perform SWAP")
+                    stack[-1], stack[-2] = stack[-2], stack[-1]
 
                 case _:
                     raise Exception(f"Unknown command: {command_parts[0]}")
