@@ -12,8 +12,10 @@ My next step is to add a couple more commands to this language, and then I'll pr
     PUSH {value} → Pushes a number to the top of the stack
     
     POP → Discards the top element of the stack
+
+    SWAP → Swap the top two elements of the stack
     
-    (NOT IMPLEMENTED) CLEAR → Remove all elements from the stack
+    CLEAR → Remove all elements from the stack
 
     ADD → Removes the top two elements of the stack, adds them, and inserts the result onto the stack
     
