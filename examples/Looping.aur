@@ -2,7 +2,7 @@ START
 
 // Say hi 5 times
 
-PUSH 5
+PUSHINT 5
 JZ 10
 DISPLAY Hi
 DEC
