@@ -126,9 +126,8 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 throw std::runtime_error("Not enough values in the stack to perform ADD");
             }
-            auto num1_a = stack.back();
-            stack.pop_back();
-            auto num2_a = stack.back();
+            auto num1_a = stack[stack.size() - 1];
+            auto num2_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
                 throw std::runtime_error("Cannot add an INT and a STR");
             }
@@ -142,9 +141,8 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 throw std::runtime_error("Not enough values in the stack to perform SUB");
             }
-            auto num2_a = stack.back();
-            stack.pop_back();
-            auto num1_a = stack.back();
+            auto num2_a = stack[stack.size() - 1];
+            auto num1_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
                 throw std::runtime_error("Cannot subtract an INT and a STR");
             }
@@ -158,9 +156,8 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 throw std::runtime_error("Not enough values in the stack to perform MUL");
             }
-            auto num1_a = stack.back();
-            stack.pop_back();
-            auto num2_a = stack.back();
+            auto num1_a = stack[stack.size() - 1];
+            auto num2_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
                 throw std::runtime_error("Cannot multiply an INT and a STR");
             }
@@ -174,9 +171,8 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 throw std::runtime_error("Not enough values in the stack to perform DIV");
             }
-            auto num2_a = stack.back();
-            stack.pop_back();
-            auto num1_a = stack.back();
+            auto num2_a = stack[stack.size() - 1];
+            auto num1_a = stack[stack.size() - 2];
 
             int num1_i;
             int num2_i;
@@ -194,13 +190,12 @@ int main(int argc, char** argv) {
             stack.emplace_back(num1_i / num2_i);
         }
 
-        else if (command == "DIV") {
+        else if (command == "MOD") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values in the stack to perform DIV");
+                throw std::runtime_error("Not enough values in the stack to perform MOD");
             }
-            auto num2_a = stack.back();
-            stack.pop_back();
-            auto num1_a = stack.back();
+            auto num2_a = stack[stack.size() - 1];
+            auto num1_a = stack[stack.size() - 2];
 
             int num1_i;
             int num2_i;
@@ -208,7 +203,7 @@ int main(int argc, char** argv) {
                 num1_i = std::get<int>(num1_a);
                 num2_i = std::get<int>(num2_a);
             } catch (std::exception &e) {
-                //throw std::runtime_error("Cannot divide an INT and a STR");
+                throw std::runtime_error("Cannot divide an INT and a STR");
             }
 
             if (num2_i == 0) {
@@ -219,7 +214,7 @@ int main(int argc, char** argv) {
         }
 
         else if (command == "DISPLAY") {
-            if (command_parts.size() == 1 || command_parts[1].find_first_not_of(" \t\r\n") == std::string::npos) {
+            if (command_parts.size() == 1 || command_parts[1].find_first_not_of(" \t\r\n") == std::string::npos || command_parts.size() < 2) {
                 std::cout << std::endl;
             }
             std::string argument = command_parts[1];
