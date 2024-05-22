@@ -448,8 +448,6 @@ int main(int argc, char** argv) {
             std::string input;
             std::getline(std::cin, input);
             stack.emplace_back(input);
-            // Clear the newline character left in the input buffer
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
         else if (command == "SWAP") {
@@ -500,7 +498,28 @@ int main(int argc, char** argv) {
                 current_line = jump_line - 1;
             }
         }
+
+//        Uncomment the following lines to print the stack for every line iterated over in the file
+//        if (stack.empty()) {
+//            std::clog << "[]" << std::endl;
+//        } else {
+//            std::clog << "[";
+//            for (size_t i = 0; i < stack.size(); ++i) {
+//                try {
+//                    std::clog << std::get<int>(stack[i]);
+//                } catch (std::exception &e) {
+//                    std::clog << std::get<std::string>(stack[i]);
+//                }
+//                if (i != stack.size() - 1) {
+//                    std::clog << ", ";
+//                }
+//            }
+//            std::clog << "]" << std::endl;
+//        }
     }
+
+    std::cout << "Press enter to exit..." << std::endl;
+    getchar();
 
     return EXIT_SUCCESS;
 }
