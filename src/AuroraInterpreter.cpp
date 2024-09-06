@@ -46,7 +46,6 @@ void end(int code, const char* msg) {
 
 
 int main(int argc, char** argv) {
-    std::cerr << "Custom error!" << std::endl;
 
     if (argc != 2) {
         std::stringstream ss;
@@ -71,7 +70,7 @@ int main(int argc, char** argv) {
         end(3, "");
     }
 
-    std::vector<std::variant<int, std::string>> stack;
+    std::vector<std::variant<int, std::string>> stack;  // Initialize the stack for holding values. Can be either an int or a str.
     std::string line;
     int current_line = 0;
 
