@@ -1,10 +1,31 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cstring>
 #include <string>
 #include <sstream>
 #include <variant>
 #include <limits>
+
+/*
+ * EXIT CODES:
+ * 0 - Success
+ * 1 - Incorrect program arguments
+ * 2 - Incorrect file type
+ * 3 - Error opening file
+ * 4 - Start command not found
+ * 5 - End command not found
+ * 6 - Invalid command usage
+ * 7 - Not enough values on the stack to perform operation
+*/
+
+void clearScreen() {
+#ifdef __linux__
+    system("clear");
+#else
+    system("cls");
+#endif
+}
 
 // Function to split a string by space
 std::vector<std::string> split(const std::string& s) {
@@ -17,24 +38,37 @@ std::vector<std::string> split(const std::string& s) {
     return tokens;
 }
 
+void end(int code, const char* msg) {
+    std::cout << (strcmp(msg, "") == 0 ? "Press enter to exit..." : msg);
+    getchar();
+    exit(code);
+}
+
 
 int main(int argc, char** argv) {
+    std::cerr << "Custom error!" << std::endl;
 
     if (argc != 2) {
         std::stringstream ss;
         ss << "Incorrect arguments! Usage: " << argv[0] << " <filename>\n";
-        throw std::runtime_error(ss.str());
+        std::cerr << ss.str() << std::endl;
+        std::cout << std::flush;
+        end(1, "");
     }
 
     std::string file_name = argv[1];
 
     if (file_name.size() < 4 || file_name.substr(file_name.size() - 4) != ".aur") {
-        throw std::runtime_error("Not an Aurora (.aur) file.");
+        std::cerr << "Not an Aurora (.aur) file." << std::endl;
+        std::cout << std::flush;
+        end(2, "");
     }
 
     std::ifstream file(file_name);
     if (!file.is_open()) {
-        throw std::runtime_error("Error opening file: " + file_name);
+        std::cerr << "Error opening file: " << file_name << std::endl;
+        std::cout << std::flush;
+        end(3, "");
     }
 
     std::vector<std::variant<int, std::string>> stack;
@@ -54,11 +88,15 @@ int main(int argc, char** argv) {
     }
 
     if (!startFound) {
-        throw std::runtime_error("START not found");
+        std::cerr << "START not found" << std::endl;
+        std::cout << std::flush;
+        end(4, "");
     }
 
     if (!endFound) {
-        throw std::runtime_error("END not found");
+        std::cerr << "END not found" << std::endl;
+        std::cout << std::flush;
+        end(5, "");
     }
 
     file.clear();
@@ -110,21 +148,22 @@ int main(int argc, char** argv) {
 
         else if (command == "POP") {
             if (stack.empty()) {
-                throw std::runtime_error("Stack is empty, cannot POP");
+                std::cerr << "Stack is empty, cannot POP" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             stack.pop_back();
         }
 
         else if (command == "CLEAR") {
-            if (stack.empty()) {
-                throw std::runtime_error("Stack is already empty, cannot CLEAR");
-            }
             stack.clear();
         }
 
         else if (command == "ADD") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values in the stack to perform ADD");
+                std::cerr << "Not enough values in the stack to perform ADD" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto num1_a = stack[stack.size() - 1];
             auto num2_a = stack[stack.size() - 2];
@@ -494,6 +533,14 @@ int main(int argc, char** argv) {
             }
         }
 
+        else if (command == "START") { continue; }
+
+        else {
+            clearScreen();
+            std::cerr << "Unknown command: " << command << std::endl;
+            end(-1, "");
+        }
+
 //        Uncomment the following lines to print the stack for every line iterated over in the file
 //        if (stack.empty()) {
 //            std::clog << "[]" << std::endl;
@@ -513,8 +560,7 @@ int main(int argc, char** argv) {
 //        }
     }
 
-    std::cout << "Press enter to exit..." << std::endl;
-    getchar();
+    end(0, "");
 
     return EXIT_SUCCESS;
 }
