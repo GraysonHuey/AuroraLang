@@ -17,6 +17,7 @@
  * 5 - End command not found
  * 6 - Invalid command usage
  * 7 - Not enough values on the stack to perform operation
+ * 8 - Bad variant access
 */
 
 void clearScreen() {
@@ -38,7 +39,7 @@ std::vector<std::string> split(const std::string& s) {
     return tokens;
 }
 
-void end(int code, const char* msg) {
+void end(int code, const std::string msg) {
     std::cout << (strcmp(msg, "") == 0 ? "Press enter to exit..." : msg);
     getchar();
     exit(code);
@@ -122,10 +123,12 @@ int main(int argc, char** argv) {
             int num;
             try {
                 num = stoi(command_parts[1]);
+                stack.emplace_back(num);
             } catch (std::exception &e) {
-                throw std::runtime_error("Invalid PUSH command. Usage: PUSHINT <number>");
+                std::cerr << "Invalid PUSH command. Usage: PUSHINT <number>" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
-            stack.emplace_back(num);
         }
 
         else if (command == "PUSHSTR") {
@@ -167,7 +170,9 @@ int main(int argc, char** argv) {
             auto num1_a = stack[stack.size() - 1];
             auto num2_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
-                throw std::runtime_error("Cannot add an INT and a STR");
+                std::cerr << "Cannot add an INT and a STR" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
             int num1_i = std::get<int>(num1_a);
             int num2_i = std::get<int>(num2_a);
@@ -177,12 +182,16 @@ int main(int argc, char** argv) {
 
         else if (command == "SUB") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values in the stack to perform SUB");
+                std::cerr << "Not enough values in the stack to perform SUB" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto num2_a = stack[stack.size() - 1];
             auto num1_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
-                throw std::runtime_error("Cannot subtract an INT and a STR");
+                std::cerr << "Cannot subtract an INT and a STR" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
             int num1_i = std::get<int>(num1_a);
             int num2_i = std::get<int>(num2_a);
@@ -192,12 +201,16 @@ int main(int argc, char** argv) {
 
         else if (command == "MUL") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values in the stack to perform MUL");
+                std::cerr << "Not enough values in the stack to perform MUL" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto num1_a = stack[stack.size() - 1];
             auto num2_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
-                throw std::runtime_error("Cannot multiply an INT and a STR");
+                std:: cerr << "Cannot multiply an INT and a STR" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
             int num1_i = std::get<int>(num1_a);
             int num2_i = std::get<int>(num2_a);
@@ -207,7 +220,9 @@ int main(int argc, char** argv) {
 
         else if (command == "DIV") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values in the stack to perform DIV");
+                std::cerr << "Not enough values in the stack to perform DIV" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto num2_a = stack[stack.size() - 1];
             auto num1_a = stack[stack.size() - 2];
@@ -222,7 +237,9 @@ int main(int argc, char** argv) {
             }
 
             if (num2_i == 0) {
-                throw std::runtime_error("Cannot divide by 0.");
+                std::cerr << "Cannot divide by 0." << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
 
             stack.emplace_back(num1_i / num2_i);
@@ -230,7 +247,9 @@ int main(int argc, char** argv) {
 
         else if (command == "MOD") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values in the stack to perform MOD");
+                std::cerr << "Not enough values in the stack to perform MOD" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto num2_a = stack[stack.size() - 1];
             auto num1_a = stack[stack.size() - 2];
@@ -241,11 +260,15 @@ int main(int argc, char** argv) {
                 num1_i = std::get<int>(num1_a);
                 num2_i = std::get<int>(num2_a);
             } catch (std::exception &e) {
-                throw std::runtime_error("Cannot divide an INT and a STR");
+                std::cerr << "Cannot divide an INT and a STR" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
 
             if (num2_i == 0) {
-                throw std::runtime_error("Cannot divide by 0.");
+                std::cerr << "Cannot divide by 0." << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
 
             stack.emplace_back(num1_i % num2_i);
@@ -258,7 +281,9 @@ int main(int argc, char** argv) {
             std::string argument = command_parts[1];
             if (argument == "TOP") {
                 if (stack.empty()) {
-                    throw std::runtime_error("Stack is empty, cannot DISPLAY");
+                    std::cerr << "Stack is empty, cannot DISPLAY" << std::endl;
+                    std::cout << std::flush;
+                    end(7, "");
                 }
                 try {
                     std::cout << std::get<int>(stack.back()) << std::endl;
@@ -297,7 +322,9 @@ int main(int argc, char** argv) {
 
         else if (command == "EQ") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values on the stack to perform EQ");
+                std::cerr << "Not enough values on the stack to perform EQ" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -311,14 +338,18 @@ int main(int argc, char** argv) {
                     equal = false;
                 }
             } catch (std::exception &e) {
-                throw std::runtime_error("Bad variant access");
+                std::cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
             stack.emplace_back(equal ? 1 : 0);
         }
 
         else if (command == "NEQ") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values on the stack to perform EQ");
+                std::cerr << "Not enough values on the stack to perform EQ" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -332,7 +363,9 @@ int main(int argc, char** argv) {
                     equal = false;
                 }
             } catch (std::exception &e) {
-                throw std::runtime_error("Bad variant access");
+                std::cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
             stack.emplace_back(equal ? 0 : 1);
         }
