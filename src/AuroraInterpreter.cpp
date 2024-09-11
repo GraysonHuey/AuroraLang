@@ -18,6 +18,7 @@
  * 6 - Invalid command usage
  * 7 - Not enough values on the stack to perform operation
  * 8 - Bad variant access
+ * 9 - Unknown command
 */
 
 void clearScreen() {
@@ -577,7 +578,9 @@ int main(int argc, char** argv) {
 
         else if (command == "JZ") {
             if (command_parts.size() < 2) {
-                throw std::runtime_error("Incorrect JZ command. Usage: JZ <line num>");
+                std::cerr << "Incorrect JZ command. Usage: JZ <line num>" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
             int jump_line = stoi(command_parts[1]);
             if (std::get<int>(stack.back()) == 0) {
@@ -592,7 +595,9 @@ int main(int argc, char** argv) {
 
         else if (command == "JNZ") {
             if (command_parts.size() < 2) {
-                throw std::runtime_error("Incorrect JNZ command. Usage: JNZ <line num>");
+                std::cerr << "Incorrect JNZ command. Usage: JNZ <line num>" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
             int jump_line = stoi(command_parts[1]);
             if (std::get<int>(stack.back()) != 0) {
@@ -610,7 +615,7 @@ int main(int argc, char** argv) {
         else {
             clearScreen();
             std::cerr << "Unknown command: " << command << std::endl;
-            end(-1, "");
+            end(9, "");
         }
 
 //        Uncomment the following lines to print the stack for every line iterated over in the file
