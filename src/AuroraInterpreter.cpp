@@ -372,7 +372,9 @@ int main(int argc, char** argv) {
 
         else if (command == "GT") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values on the stack to perform GT");
+                std::cerr << "Not enough values on the stack to perform GT" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -386,14 +388,18 @@ int main(int argc, char** argv) {
                     greater = false;
                 }
             } catch (std::exception &e) {
-                throw std::runtime_error("Bad variant access");
+                std:cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
             stack.emplace_back(greater ? 1 : 0);
         }
 
         else if (command == "LT") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values on the stack to perform LT");
+                std::cerr << "Not enough values on the stack to perform LT" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -407,14 +413,18 @@ int main(int argc, char** argv) {
                     less = false;
                 }
             } catch (std::exception &e) {
-                throw std::runtime_error("Bad variant access");
+                std::cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
             stack.emplace_back(less ? 1 : 0);
         }
 
         else if (command == "AND") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values on the stack to perform AND");
+                std::cerr << "Not enough values on the stack to perform AND" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -422,16 +432,22 @@ int main(int argc, char** argv) {
                 if (std::holds_alternative<int>(item1) && std::holds_alternative<int>(item2)) {
                     stack.emplace_back(std::get<int>(item1) == 1 && std::get<int>(item2) == 1 ? 1 : 0);
                 } else {
-                    throw std::runtime_error("Cannot perform AND on an INT and a STR");
+                    std::cerr << "Cannot perform AND on an INT and a STR" << std::endl;
+                    std::cout << std::flush;
+                    end(6, "");
                 }
             } catch (std::bad_variant_access &e) {
-                throw std::runtime_error("Bad variant access");
+                std::cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
         }
 
         else if (command == "OR") {
             if (stack.size() < 2) {
-                throw std::runtime_error("Not enough values on the stack to perform OR");
+                std::cerr << "Not enough values on the stack to perform OR" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 1];
@@ -439,29 +455,39 @@ int main(int argc, char** argv) {
                 if (std::holds_alternative<int>(item1) && std::holds_alternative<int>(item2)) {
                     stack.emplace_back(std::get<int>(item1) != 0 || std::get<int>(item2) != 0 ? 1 : 0);
                 } else {
-                    throw std::runtime_error("Cannot perform OR on an INT and a STR");
+                    std::cerr << "Cannot perform OR on an INT and a STR" << std::endl;
+                    std::cout << std::flush;
+                    end(6, "");
                 }
             } catch (std::bad_variant_access &e) {
-                throw std::runtime_error("Bad variant access");
+                std::cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
         }
 
         else if (command == "NOT") {
             if (stack.empty()) {
-                throw std::runtime_error("Stack is empty, cannot perform NOT");
+                std::cerr << "Stack is empty, cannot perform NOT" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             auto item = stack[stack.size() - 1];
             if (std::holds_alternative<int>(item)) {
                 int item_i = std::get<int>(item) * -1;
                 stack.emplace_back(item_i);
             } else {
-                throw std::runtime_error("Cannot perform NOT on a STR");
+                std::cerr << "Cannot perform NOT on a STR" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
         }
 
         else if (command == "INC") {
             if (stack.empty()) {
-                throw std::runtime_error("Stack is empty, cannot increment");
+                std::cerr << "Stack is empty, cannot increment" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             try {
                 auto item = stack[stack.size() - 1];
@@ -471,16 +497,22 @@ int main(int argc, char** argv) {
                     stack.pop_back();
                     stack.emplace_back(num);
                 } else {
-                    throw std::runtime_error("Cannot increment a STR");
+                    std::cerr << "Cannot increment a STR" << std::endl;
+                    std::cout << std::flush;
+                    end(6, "");
                 }
             } catch (std::bad_variant_access &e) {
-                throw std::runtime_error("Bad variant access");
+                std::cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
         }
 
         else if (command == "DEC") {
             if (stack.empty()) {
-                throw std::runtime_error("Stack is empty, cannot decrement");
+                std::cerr << "Stack is empty, cannot decrement" << std::endl;
+                std::cout << std::flush;
+                end(7, "");
             }
             try {
                 auto item = stack[stack.size() - 1];
@@ -490,10 +522,14 @@ int main(int argc, char** argv) {
                     stack.pop_back();
                     stack.emplace_back(num);
                 } else {
-                    throw std::runtime_error("Cannot decrement a STR");
+                    std::cerr << "Cannot decrement a STR" << std::endl;
+                    std::cout << std::flush;
+                    end(6, "");
                 }
             } catch (std::bad_variant_access &e) {
-                throw std::runtime_error("Bad variant access");
+                std::cerr << "Bad variant access" << std::endl;
+                std::cout << std::flush;
+                end(8, "");
             }
         }
 
@@ -506,7 +542,9 @@ int main(int argc, char** argv) {
                 // Clear the newline character left in the input buffer
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             } catch (std::exception &e) {
-                throw std::runtime_error("READINT only accepts integers. Did you mean to use READSTR?");
+                std::cerr << "READINT only accepts integers. Did you mean to use READSTR?" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
         }
 
@@ -524,7 +562,9 @@ int main(int argc, char** argv) {
 
         else if (command == "JUMP") {
             if (command_parts.size() < 2) {
-                throw std::runtime_error("Incorrect JUMP command. Usage: JUMP <line num>");
+                std::cerr << "Incorrect JUMP command. Usage: JUMP <line num>" << std::endl;
+                std::cout << std::flush;
+                end(6, "");
             }
             int jump_line = stoi(command_parts[1]);
             file.clear();
