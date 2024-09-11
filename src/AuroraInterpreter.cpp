@@ -41,11 +41,10 @@ std::vector<std::string> split(const std::string& s) {
 }
 
 void end(int code, const std::string msg) {
-    std::cout << (strcmp(msg, "") == 0 ? "Press enter to exit..." : msg);
+    std::cout << "Press enter to exit..." << std::endl;
     getchar();
     exit(code);
 }
-
 
 int main(int argc, char** argv) {
 
@@ -54,7 +53,7 @@ int main(int argc, char** argv) {
         ss << "Incorrect arguments! Usage: " << argv[0] << " <filename>\n";
         std::cerr << ss.str() << std::endl;
         std::cout << std::flush;
-        end(1, "");
+        end(1);
     }
 
     std::string file_name = argv[1];
@@ -62,14 +61,14 @@ int main(int argc, char** argv) {
     if (file_name.size() < 4 || file_name.substr(file_name.size() - 4) != ".aur") {
         std::cerr << "Not an Aurora (.aur) file." << std::endl;
         std::cout << std::flush;
-        end(2, "");
+        end(2);
     }
 
     std::ifstream file(file_name);
     if (!file.is_open()) {
         std::cerr << "Error opening file: " << file_name << std::endl;
         std::cout << std::flush;
-        end(3, "");
+        end(3);
     }
 
     std::vector<std::variant<int, std::string>> stack;  // Initialize the stack for holding values. Can be either an int or a str.
@@ -91,13 +90,13 @@ int main(int argc, char** argv) {
     if (!startFound) {
         std::cerr << "START not found" << std::endl;
         std::cout << std::flush;
-        end(4, "");
+        end(4);
     }
 
     if (!endFound) {
         std::cerr << "END not found" << std::endl;
         std::cout << std::flush;
-        end(5, "");
+        end(5);
     }
 
     file.clear();
@@ -128,7 +127,7 @@ int main(int argc, char** argv) {
             } catch (std::exception &e) {
                 std::cerr << "Invalid PUSH command. Usage: PUSHINT <number>" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
         }
 
@@ -153,7 +152,7 @@ int main(int argc, char** argv) {
             if (stack.empty()) {
                 std::cerr << "Stack is empty, cannot POP" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             stack.pop_back();
         }
@@ -166,14 +165,14 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values in the stack to perform ADD" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto num1_a = stack[stack.size() - 1];
             auto num2_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
                 std::cerr << "Cannot add an INT and a STR" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
             int num1_i = std::get<int>(num1_a);
             int num2_i = std::get<int>(num2_a);
@@ -185,14 +184,14 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values in the stack to perform SUB" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto num2_a = stack[stack.size() - 1];
             auto num1_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
                 std::cerr << "Cannot subtract an INT and a STR" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
             int num1_i = std::get<int>(num1_a);
             int num2_i = std::get<int>(num2_a);
@@ -204,14 +203,14 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values in the stack to perform MUL" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto num1_a = stack[stack.size() - 1];
             auto num2_a = stack[stack.size() - 2];
             if (std::holds_alternative<std::string>(num1_a) || std::holds_alternative<std::string>(num2_a)) {
                 std:: cerr << "Cannot multiply an INT and a STR" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
             int num1_i = std::get<int>(num1_a);
             int num2_i = std::get<int>(num2_a);
@@ -223,7 +222,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values in the stack to perform DIV" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto num2_a = stack[stack.size() - 1];
             auto num1_a = stack[stack.size() - 2];
@@ -240,7 +239,7 @@ int main(int argc, char** argv) {
             if (num2_i == 0) {
                 std::cerr << "Cannot divide by 0." << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
 
             stack.emplace_back(num1_i / num2_i);
@@ -250,7 +249,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values in the stack to perform MOD" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto num2_a = stack[stack.size() - 1];
             auto num1_a = stack[stack.size() - 2];
@@ -263,13 +262,13 @@ int main(int argc, char** argv) {
             } catch (std::exception &e) {
                 std::cerr << "Cannot divide an INT and a STR" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
 
             if (num2_i == 0) {
                 std::cerr << "Cannot divide by 0." << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
 
             stack.emplace_back(num1_i % num2_i);
@@ -284,7 +283,7 @@ int main(int argc, char** argv) {
                 if (stack.empty()) {
                     std::cerr << "Stack is empty, cannot DISPLAY" << std::endl;
                     std::cout << std::flush;
-                    end(7, "");
+                    end(7);
                 }
                 try {
                     std::cout << std::get<int>(stack.back()) << std::endl;
@@ -325,7 +324,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values on the stack to perform EQ" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -341,7 +340,7 @@ int main(int argc, char** argv) {
             } catch (std::exception &e) {
                 std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
             stack.emplace_back(equal ? 1 : 0);
         }
@@ -350,7 +349,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values on the stack to perform EQ" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -366,7 +365,7 @@ int main(int argc, char** argv) {
             } catch (std::exception &e) {
                 std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
             stack.emplace_back(equal ? 0 : 1);
         }
@@ -375,7 +374,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values on the stack to perform GT" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -391,7 +390,7 @@ int main(int argc, char** argv) {
             } catch (std::exception &e) {
                 std:cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
             stack.emplace_back(greater ? 1 : 0);
         }
@@ -400,7 +399,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values on the stack to perform LT" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -416,7 +415,7 @@ int main(int argc, char** argv) {
             } catch (std::exception &e) {
                 std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
             stack.emplace_back(less ? 1 : 0);
         }
@@ -425,7 +424,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values on the stack to perform AND" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 2];
@@ -435,12 +434,12 @@ int main(int argc, char** argv) {
                 } else {
                     std::cerr << "Cannot perform AND on an INT and a STR" << std::endl;
                     std::cout << std::flush;
-                    end(6, "");
+                    end(6);
                 }
             } catch (std::bad_variant_access &e) {
                 std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
         }
 
@@ -448,7 +447,7 @@ int main(int argc, char** argv) {
             if (stack.size() < 2) {
                 std::cerr << "Not enough values on the stack to perform OR" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
             auto item1 = stack[stack.size() - 1];
             auto item2 = stack[stack.size() - 1];
@@ -458,12 +457,12 @@ int main(int argc, char** argv) {
                 } else {
                     std::cerr << "Cannot perform OR on an INT and a STR" << std::endl;
                     std::cout << std::flush;
-                    end(6, "");
+                    end(6);
                 }
             } catch (std::bad_variant_access &e) {
                 std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
         }
 
@@ -471,7 +470,7 @@ int main(int argc, char** argv) {
             if (stack.empty()) {
                 std::cerr << "Stack is empty, cannot perform NOT" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             auto item = stack[stack.size() - 1];
             if (std::holds_alternative<int>(item)) {
@@ -480,7 +479,7 @@ int main(int argc, char** argv) {
             } else {
                 std::cerr << "Cannot perform NOT on a STR" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
         }
 
@@ -488,7 +487,7 @@ int main(int argc, char** argv) {
             if (stack.empty()) {
                 std::cerr << "Stack is empty, cannot increment" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             try {
                 auto item = stack[stack.size() - 1];
@@ -500,12 +499,12 @@ int main(int argc, char** argv) {
                 } else {
                     std::cerr << "Cannot increment a STR" << std::endl;
                     std::cout << std::flush;
-                    end(6, "");
+                    end(6);
                 }
             } catch (std::bad_variant_access &e) {
                 std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
         }
 
@@ -513,7 +512,7 @@ int main(int argc, char** argv) {
             if (stack.empty()) {
                 std::cerr << "Stack is empty, cannot decrement" << std::endl;
                 std::cout << std::flush;
-                end(7, "");
+                end(7);
             }
             try {
                 auto item = stack[stack.size() - 1];
@@ -525,12 +524,12 @@ int main(int argc, char** argv) {
                 } else {
                     std::cerr << "Cannot decrement a STR" << std::endl;
                     std::cout << std::flush;
-                    end(6, "");
+                    end(6);
                 }
             } catch (std::bad_variant_access &e) {
                 std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
-                end(8, "");
+                end(8);
             }
         }
 
@@ -545,7 +544,7 @@ int main(int argc, char** argv) {
             } catch (std::exception &e) {
                 std::cerr << "READINT only accepts integers. Did you mean to use READSTR?" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
         }
 
@@ -565,7 +564,7 @@ int main(int argc, char** argv) {
             if (command_parts.size() < 2) {
                 std::cerr << "Incorrect JUMP command. Usage: JUMP <line num>" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
             int jump_line = stoi(command_parts[1]);
             file.clear();
@@ -580,7 +579,7 @@ int main(int argc, char** argv) {
             if (command_parts.size() < 2) {
                 std::cerr << "Incorrect JZ command. Usage: JZ <line num>" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
             int jump_line = stoi(command_parts[1]);
             if (std::get<int>(stack.back()) == 0) {
@@ -597,7 +596,7 @@ int main(int argc, char** argv) {
             if (command_parts.size() < 2) {
                 std::cerr << "Incorrect JNZ command. Usage: JNZ <line num>" << std::endl;
                 std::cout << std::flush;
-                end(6, "");
+                end(6);
             }
             int jump_line = stoi(command_parts[1]);
             if (std::get<int>(stack.back()) != 0) {
@@ -615,7 +614,7 @@ int main(int argc, char** argv) {
         else {
             clearScreen();
             std::cerr << "Unknown command: " << command << std::endl;
-            end(9, "");
+            end(9);
         }
 
 //        Uncomment the following lines to print the stack for every line iterated over in the file
