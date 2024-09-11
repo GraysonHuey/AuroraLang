@@ -636,7 +636,7 @@ int main(int argc, char** argv) {
 //        }
     }
 
-    end(0, "");
+    end(0);
 
     return EXIT_SUCCESS;
 }
