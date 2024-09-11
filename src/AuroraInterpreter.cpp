@@ -40,7 +40,7 @@ std::vector<std::string> split(const std::string& s) {
     return tokens;
 }
 
-void end(int code, const std::string msg) {
+void end(int code) {
     std::cout << "Press enter to exit..." << std::endl;
     getchar();
     exit(code);
