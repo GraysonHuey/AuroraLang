@@ -388,7 +388,7 @@ int main(int argc, char** argv) {
                     greater = false;
                 }
             } catch (std::exception &e) {
-                std:cerr << "Bad variant access" << std::endl;
+                std::cerr << "Bad variant access" << std::endl;
                 std::cout << std::flush;
                 end(8);
             }
