@@ -174,6 +174,8 @@ Output
 
 The pop command simply takes the top item of the stack and discards it
 
+<br></br>
+
 Code
 
     START
