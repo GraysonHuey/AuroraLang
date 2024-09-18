@@ -347,7 +347,7 @@ int main(int argc, char** argv) {
 
         else if (command == "NEQ") {
             if (stack.size() < 2) {
-                std::cerr << "Not enough values on the stack to perform EQ" << std::endl;
+                std::cerr << "Not enough values on the stack to perform NEQ" << std::endl;
                 std::cout << std::flush;
                 end(7);
             }
