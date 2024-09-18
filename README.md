@@ -1,9 +1,9 @@
+
 # Welcome to the Aurora programming language!
 Aurora is a very simple interpreted stack-based language to start my exploration of how programming languages work. When writing this language, I was inspired by the syntax of BASIC as well as some assembly instructions. As this is a very simple language, not much can be done in it, but to see some use cases, check out our examples below!
 <br></br>
 ## What am I doing next?
 My next step is to add a couple more commands to this language, and then I'll start working on converting the interpreter into a compiler.
-<br></br>
 <br></br>
 # Quick Reference
 
@@ -173,6 +173,20 @@ Output
     []
 
 The pop command simply takes the top item of the stack and discards it
+
+Code
+
+    START
+    PUSH 5
+    PUSH 7
+    DISPLAY STACK
+    CLEAR
+    DISPLAY STACK
+Output
+
+    [5, 7]
+    []
+The clear command removes every single element of the stack and resets it to how it is at the beginning of runtime
 
 ## Comments
 A comment is a line of text solely for the programmer to read. It is completely ignored by the interpreter.
