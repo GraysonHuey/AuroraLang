@@ -1,6 +1,8 @@
 
 # Welcome to the Aurora programming language!
 Aurora is a very simple interpreted stack-based language to start my exploration of how programming languages work. When writing this language, I was inspired by the syntax of BASIC as well as some assembly instructions. As this is a very simple language, not much can be done in it, but to see some use cases, check out our examples below!
+
+Please keep in mind that this language depends on C++ 17, which means it will not work on Replit or other platforms with a version under 17.
 <br></br>
 ## What am I doing next?
 My next step is to add a couple more commands to this language, and then I'll start working on converting the interpreter into a compiler.
