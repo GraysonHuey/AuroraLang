@@ -1,3 +1,5 @@
+use std::process::Command;
+
 pub const BOLD: &str = "\x1b[1m";
 pub const RED: &str = "\x1b[31m";
 pub const GREEN: &str = "\x1b[32m";
@@ -10,4 +12,16 @@ pub fn is_int(string: &str) -> bool {
         }
     }
     return true;
+}
+
+pub fn command(cmd: &str, args: &[&str]) {
+    let proc = Command::new(cmd)
+        .args(args)
+        .spawn();
+
+    print!("{GREEN}{BOLD}{cmd} ");
+    for arg in args {
+        print!("{arg} ");
+    }
+    println!("{RESET}");
 }

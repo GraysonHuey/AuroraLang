@@ -6,7 +6,7 @@ use std::path::Path;
 mod utils;
 mod tokens;
 mod generateASM;
-use utils::{BOLD, RED, GREEN, RESET};
+use utils::{BOLD, RED, GREEN, RESET, command};
 use tokens::{Token, TokType, tokenize};
 use generateASM::generateASM;
 
@@ -43,16 +43,14 @@ fn main() {
 
     generateASM(tokens);
 
-    let _ = process::Command::new("fasm")
-        .arg("output.asm")
-        .spawn();
+    command("fasm", &["output.asm"]);
+
+    command("chmod", &["+x", "output"]);
 
     let output_name: String = env::args().nth(2).unwrap_or_else(|| {"output".to_string()});
+    if output_name != "output".to_string() {
+        command("mv", &["output", output_name.as_str()]);
+    }
 
-    let _ = process::Command::new("ld")
-        .arg("-o")
-        .arg(output_name)
-        .arg("output.o")
-        .arg("-lc")
-        .spawn();
+    println!("{GREEN}{file_name} successfully compiled!{RESET}");
 }
