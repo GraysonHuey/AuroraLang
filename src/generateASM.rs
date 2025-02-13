@@ -1,0 +1,20 @@
+use std::fs::File;
+use std::io::Write;
+
+use crate::tokens::{Token};
+
+#[allow(unused_must_use)]
+pub fn generateASM(tokens: Vec<Token>) {
+    let mut file = File::create("output.asm").unwrap();
+
+    file.write(b"format ELF64\n\n");
+    file.write(b"section '.text' executable\n");
+    file.write(b"public _start\n");
+    file.write(b"; extrn printf\n\n");
+    file.write(b"_start:\n");
+
+    file.write(b"    ; EXIT\n");
+    file.write(b"    mov rax, 60\n");
+    file.write(b"    mov rdi, 0\n");
+    file.write(b"    syscall\n\n");
+}

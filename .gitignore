@@ -1,2 +1,9 @@
 main
 test.aur
+run.sh
+*.o
+*.asm
+
+# Added by cargo
+
+/target

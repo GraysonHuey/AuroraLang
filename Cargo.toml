@@ -7,4 +7,4 @@ edition = "2021"
 
 [[bin]]
 name = "Aurorust"
-path = "main.rs"
+path = "src/main.rs"
