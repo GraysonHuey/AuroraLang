@@ -1,0 +1,10 @@
+[package]
+name = "Aurorust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "Aurorust"
+path = "main.rs"
