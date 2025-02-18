@@ -21,9 +21,9 @@ pub enum TokType {
 
 #[derive(Debug)]
 pub struct Token {
-    typ: TokType,
-    val: i32,
-    data: String,
+    pub typ: TokType,
+    pub val: i32,
+    pub data: String,
 }
 
 impl Token {

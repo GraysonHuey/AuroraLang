@@ -45,12 +45,14 @@ fn main() {
 
     command("fasm", &["output.asm"]);
 
-    command("chmod", &["+x", "output"]);
-
     let output_name: String = env::args().nth(2).unwrap_or_else(|| {"output".to_string()});
-    if output_name != "output".to_string() {
-        command("mv", &["output", output_name.as_str()]);
-    }
 
-    println!("{GREEN}{file_name} successfully compiled!{RESET}");
+    command("ld", &["output.o", "-o", output_name.as_str(), "-lc"]);
+    //command("chmod", &["+x", "output"]);
+
+    /*if output_name != "output".to_string() {
+        command("mv", &["output", output_name.as_str()]);
+    }*/
+
+    println!("{GREEN}{BOLD}{file_name} successfully compiled!{RESET}");
 }
