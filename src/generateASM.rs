@@ -7,6 +7,9 @@ use crate::tokens::{Token, TokType};
 pub fn generateASM(tokens: Vec<Token>) {
     let mut file = File::create("output.asm").unwrap();
 
+    let mut strings: Vec<String> = Vec::new();
+    let mut curStr: u32 = 0;
+
     file.write(b"format ELF64\n\n");
     file.write(b"section '.text' executable\n");
     file.write(b"public _start\n\n");
@@ -21,7 +24,13 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(value.as_bytes());
                 file.write(b"    push rax\n\n");
             }
-            TokType::STR   => { todo!(); }
+            TokType::STR   => {
+                file.write(b"    ; -- STR --\n");
+                let value = format!("    ; str{0}\n\n", curStr);
+                file.write(value.as_bytes());
+                strings.push(tok.data.clone());
+                curStr += 1;
+            }
             TokType::ADD   => {
                 file.write(b"    ; -- ADD --\n");
                 file.write(b"    pop rax\n");
@@ -125,6 +134,13 @@ pub fn generateASM(tokens: Vec<Token>) {
 
     file.write(b"\nsection '.data' writeable\n");
     file.write(b"    formatStr: dq \"%%d\", 10\n");
+
+    let mut i: u32 = 0;
+    for string in strings {
+        let name = format!("    str{0}: dq \"{1}\"", i, string.clone());
+        file.write(name.as_bytes());
+        i += 1;
+    }
 
     file.write(b"\nsection '.note.GNU-stack'");
 }

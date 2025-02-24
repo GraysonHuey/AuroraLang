@@ -37,7 +37,7 @@ impl Token {
 }
 
 pub fn tokenize(source: String) -> Vec<Token> {
-    let split_str: Vec<&str> = source.split(&[' ', '\n'][..]).collect();
+    let split_str: Vec<&str> = source.split(&[' '][..]).collect();
 
     let mut tokens: Vec<Token> = Vec::new();
 
