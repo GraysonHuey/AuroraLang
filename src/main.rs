@@ -1,3 +1,5 @@
+#![allow(unused, non_snake_case)]
+
 use std::env;
 use std::fs;
 use std::process;
@@ -35,9 +37,7 @@ fn main() {
         })
         .unwrap_or_else(|_| "NULL".to_string());
 
-    let fixed_source = aurora_source.replace("\\n", "\n");
-
-    let tokens: Vec<Token> = tokenize(fixed_source);
+    let tokens: Vec<Token> = tokenize(&aurora_source);
 
     for tok in &tokens {
         println!("{tok:?}");

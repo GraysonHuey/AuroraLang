@@ -1,3 +1,5 @@
+#![allow(unused, non_snake_case)]
+
 use std::fs::File;
 use std::io::Write;
 
@@ -18,41 +20,42 @@ pub fn generateASM(tokens: Vec<Token>) {
 
     for tok in &tokens {
         match tok.typ {
-            TokType::INT   => {
+            TokType::INT => {
                 file.write(b"    ; -- INT --\n");
                 let value = format!("    mov rax, {0}\n", tok.val);
                 file.write(value.as_bytes());
                 file.write(b"    push rax\n\n");
             }
-            TokType::STR   => {
+            TokType::STR => {
                 file.write(b"    ; -- STR --\n");
-                let value = format!("    ; str{0}\n\n", curStr);
+                let value = format!("    mov rax, str{0}\n", curStr);
                 file.write(value.as_bytes());
+                file.write(b"    push rax\n\n");
                 strings.push(tok.data.clone());
                 curStr += 1;
             }
-            TokType::ADD   => {
+            TokType::ADD => {
                 file.write(b"    ; -- ADD --\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
                 file.write(b"    add rax, rbx\n");
                 file.write(b"    push rax\n\n");
             }
-            TokType::SUB   => {
+            TokType::SUB => {
                 file.write(b"    ; -- SUB --\n");
                 file.write(b"    pop rbx\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    sub rax, rbx\n");
                 file.write(b"    push rax\n\n");
             }
-            TokType::MUL   => {
+            TokType::MUL => {
                 file.write(b"    ; -- MUL --\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
                 file.write(b"    imul rax, rbx\n");
                 file.write(b"    push rax\n\n");
             }
-            TokType::DIV   => {
+            TokType::DIV => {
                 file.write(b"    ; -- DIV --\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
@@ -60,7 +63,7 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    idiv rbx\n");
                 file.write(b"    push rax\n\n");
             }
-            TokType::MOD   => {
+            TokType::MOD => {
                 file.write(b"    ; -- MOD --\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
@@ -68,19 +71,22 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    idiv rbx\n");
                 file.write(b"    push rdx\n\n");
             }
-            TokType::PRINT => {
+            TokType::IPRINT => {
                 file.write(b"    ; -- PRINT --\n");
                 file.write(b"    pop rdi\n");
-                file.write(b"    call print\n\n");
+                file.write(b"    call iprint\n\n");
             }
-            TokType::SWAP  => {
+            TokType::SPRINT => {
+
+            }
+            TokType::SWAP => {
                 file.write(b"    ; -- SWAP --\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
                 file.write(b"    push rax\n");
                 file.write(b"    push rbx\n\n");
             }
-            TokType::ROT   => {
+            TokType::ROT => {
                 file.write(b"    ; -- ROT --\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
@@ -89,7 +95,7 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    push rax\n");
                 file.write(b"    push rcx\n\n");
             }
-            TokType::END   => {
+            TokType::END => {
                 file.write(b"    ; EXIT\n");
                 file.write(b"    mov rax, 60\n");
                 file.write(b"    mov rdi, 0\n");
@@ -98,7 +104,7 @@ pub fn generateASM(tokens: Vec<Token>) {
         }
     }
     file.write(b"; CREDITS TO TSODING FOR THE PRINT FUNCTION (htps://gitlab.com/tsoding/porth)\n; This should fall under fair use as defined by the MIT licence used by Tsoding\n");
-    file.write(b"print:\n");
+    file.write(b"iprint:\n");
     file.write(b"    mov     r9, -3689348814741910323\n");
     file.write(b"    sub     rsp, 40\n");
     file.write(b"    mov     BYTE [rsp+31], 10\n");
@@ -133,13 +139,13 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    ret\n\n");
 
     file.write(b"\nsection '.data' writeable\n");
-    file.write(b"    formatStr: dq \"%%d\", 10\n");
+    file.write(b"    formatStr: dq \"%d\", 10\n\n");
 
-    let mut i: u32 = 0;
+    curStr = 0;
     for string in strings {
-        let name = format!("    str{0}: dq \"{1}\"", i, string.clone());
+        let name = format!("    str{0}: dq \"{1}\", 0\n", curStr, string.clone());
         file.write(name.as_bytes());
-        i += 1;
+        curStr += 1;
     }
 
     file.write(b"\nsection '.note.GNU-stack'");

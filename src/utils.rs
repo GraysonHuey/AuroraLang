@@ -1,3 +1,5 @@
+#![allow(unused, non_snake_case)]
+
 use std::process::Command;
 
 pub const BOLD: &str = "\x1b[1m";
