@@ -8,19 +8,20 @@ use std::path::Path;
 mod utils;
 mod tokens;
 mod generateASM;
-use utils::{BOLD, RED, GREEN, RESET, command};
+use utils::{BOLD, RED, GREEN, RESET, command, DEBUG, log};
 use tokens::{Token, TokType, tokenize};
 use generateASM::generateASM;
 
 fn usage(program: String) {
     println!("{RED}[ERROR]: Incorrect command usage!");
-    println!("Usage: {program} <file.aur> [output name]{RESET}");
+    println!("Usage: {program} <file.aur> [output name] [-d || -debug]");
+    println!("    -d and -debug: Turn on optional debug info as the source file is compiled{RESET}");
     process::exit(1);
 }
 
 fn main() {
     let program: String = env::args().nth(0).unwrap();
-    if env::args().len() < 2 || env::args().len() > 3 {
+    if env::args().len() < 2 || env::args().len() > 4 {
         usage(program);
     }
 
@@ -37,24 +38,30 @@ fn main() {
         })
         .unwrap_or_else(|_| "NULL".to_string());
 
+    let debugFlags: Vec<String> = vec!["-d".to_string(), "-debug".to_string()];
+
+    if (env::args().len() == 4 && debugFlags.contains(&env::args().nth(3).unwrap())) || (env::args().len() == 3 && debugFlags.contains(&env::args().nth(2).unwrap())) {
+        unsafe { DEBUG = true; }
+    }
+
     let tokens: Vec<Token> = tokenize(&aurora_source);
 
-    for tok in &tokens {
-        println!("{tok:?}");
+    unsafe {
+        if DEBUG {
+            for tok in &tokens {
+                log("{tok:?}");
+            }
+        }
     }
 
     generateASM(tokens);
 
     command("fasm", &["output.asm"]);
 
-    let output_name: String = env::args().nth(2).unwrap_or_else(|| {"output".to_string()});
+    let mut output_name: String = env::args().nth(2).unwrap_or_else(|| {"output".to_string()});
+    if debugFlags.contains(&output_name) { output_name = "output".to_string(); }
 
     command("ld", &["output.o", "-o", output_name.as_str(), "-lc"]);
-    //command("chmod", &["+x", "output"]);
-
-    /*if output_name != "output".to_string() {
-        command("mv", &["output", output_name.as_str()]);
-    }*/
 
     println!("{GREEN}{BOLD}{file_name} successfully compiled!{RESET}");
 }

@@ -5,7 +5,10 @@ use std::process::Command;
 pub const BOLD: &str = "\x1b[1m";
 pub const RED: &str = "\x1b[31m";
 pub const GREEN: &str = "\x1b[32m";
+pub const YELLOW: &str = "1b[33m";
 pub const RESET: &str = "\x1b[0m";
+
+pub static mut DEBUG: bool = false;
 
 pub fn is_int(string: &str) -> bool {
     for character in string.chars() {
@@ -26,4 +29,8 @@ pub fn command(cmd: &str, args: &[&str]) {
         print!("{arg} ");
     }
     println!("{RESET}");
+}
+
+pub fn log(string: &str) {
+    println!("{YELLOW}{string}{RESET}");
 }

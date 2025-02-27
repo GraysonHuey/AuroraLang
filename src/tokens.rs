@@ -4,7 +4,7 @@ use std::process;
 use std::str::FromStr;
 
 use crate::utils;
-use utils::{BOLD, RED, GREEN, RESET, is_int};
+use utils::{BOLD, RED, GREEN, RESET, is_int, DEBUG};
 
 #[derive(Debug)]
 pub enum TokType {
@@ -41,29 +41,27 @@ impl Token {
 
 fn splitSource(source: &String) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
+    let mut current_token = String::new();
+    let mut in_string = false;
 
-    let mut characters: Vec<char> = source.chars().collect();
-
-    for character in &characters.clone() {
-        if *character == ' ' {
-            result.push(" ".to_string());
-        } else {
-            let string: String = characters.iter().collect();
-            let idx: usize = string.find(' ').unwrap_or_else(|| usize::MAX );
-            if idx == usize::MAX {
-                let pushStr = characters.iter().collect();
-                result.push(pushStr);
-                break;
+    for c in source.chars() {
+        if c == '"' {
+            in_string = !in_string;
+            current_token.push(c);
+        } else if c == ' ' && !in_string {
+            if !current_token.is_empty() {
+                result.push(current_token);
+                current_token = String::new();
             }
-
-            let pushStr = characters[..idx].iter().collect();
-            characters = characters.split_off(idx+1);
-            result.push(pushStr);
+        } else {
+            current_token.push(c);
         }
     }
 
-    println!("{source}");
-    println!("{result:?}");
+    if !current_token.is_empty() {
+        result.push(current_token);
+    }
+
     result
 }
 
@@ -118,8 +116,6 @@ pub fn tokenize(source: &String) -> Vec<Token> {
                     }
 
                     advanced = unfinishedStr.as_str();
-
-                    //advanced = &advanced[..loc];
 
                     tokens.push(Token::new(TokType::STR, advanced.len().try_into().unwrap(), advanced.to_string()));
                 }
