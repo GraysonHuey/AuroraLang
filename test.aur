@@ -1,1 +1,1 @@
-"Hello, world!\n" 123 iprint
+"Hello, world!" sprint 123 iprint

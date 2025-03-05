@@ -30,8 +30,11 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    ; -- STR --\n");
                 let value = format!("    mov rax, str{0}\n", curStr);
                 file.write(value.as_bytes());
-                file.write(b"    push rax\n\n");
+                file.write(b"    push rax\n");
                 strings.push(tok.data.clone());
+                let length = format!("    mov rax, str{0}_len\n", curStr);
+                file.write(length.as_bytes());
+                file.write(b"    push rax\n\n");
                 curStr += 1;
             }
             TokType::ADD => {
@@ -72,12 +75,17 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    push rdx\n\n");
             }
             TokType::IPRINT => {
-                file.write(b"    ; -- PRINT --\n");
+                file.write(b"    ; -- PRINT INT --\n");
                 file.write(b"    pop rdi\n");
                 file.write(b"    call iprint\n\n");
             }
             TokType::SPRINT => {
-
+                file.write(b"    ; -- PRINT STR --\n");
+                file.write(b"    mov rax, 1\n");
+                file.write(b"    mov rdi, 1\n");
+                file.write(b"    pop rdx\n");
+                file.write(b"    pop rsi\n");
+                file.write(b"    syscall\n\n");
             }
             TokType::SWAP => {
                 file.write(b"    ; -- SWAP --\n");
@@ -139,12 +147,14 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    ret\n\n");
 
     file.write(b"\nsection '.data' writeable\n");
-    file.write(b"    formatStr: dq \"%d\", 10\n\n");
+    file.write(b"    formatStr: db \"%s\", 10\n\n");
 
     curStr = 0;
     for string in strings {
-        let name = format!("    str{0}: dq \"{1}\", 0\n", curStr, string.clone());
+        let name = format!("    str{curStr}: db \"{0}\", 10, 0\n", string.clone());
         file.write(name.as_bytes());
+        let length = format!("    str{curStr}_len = $ - str{curStr}\n");
+        file.write(length.as_bytes());
         curStr += 1;
     }
 
