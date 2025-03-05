@@ -106,18 +106,19 @@ pub fn tokenize(source: &String) -> Vec<Token> {
                         Some(location) => {
                             isUnfinished = false;
                             unfinishedStr.push_str(&advanced[..location]);
+
+                            let completedStr = unfinishedStr.clone();
+                            tokens.push(Token::new(TokType::STR, completedStr.len().try_into().unwrap(), completedStr));
+
+                            unfinishedStr.clear();
                         }
                         None => {
                             isUnfinished = true;
                             unfinishedStr.push_str(&advanced);
-                            println!("UNFINISHEDSTR: {0}", unfinishedStr);
+                            unfinishedStr.push_str(" ");
                             continue;
                         }
                     }
-
-                    advanced = unfinishedStr.as_str();
-
-                    tokens.push(Token::new(TokType::STR, advanced.len().try_into().unwrap(), advanced.to_string()));
                 }
                 else {
                     eprintln!("{RED}[ERROR]: Unknown token: {s}{RESET}", s = *string);
