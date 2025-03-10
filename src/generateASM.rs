@@ -106,7 +106,7 @@ pub fn generateASM(tokens: Vec<Token>) {
                file.write(b"    mov rsi, intBuf   ; Source string\n");
                file.write(b"    call atoi         ; Convert to integer\n");
                file.write(b"    push rax          ; Push the integer value\n\n");
-}
+           }
             TokType::SREAD => {
                 file.write(b"    ; -- READ STR --\n");
                 file.write(b"    NOT IMPLEMENTED\n\n");
@@ -135,6 +135,7 @@ pub fn generateASM(tokens: Vec<Token>) {
             }
         }
     }
+
     file.write(b"; CREDITS TO TSODING FOR THE PRINT FUNCTION (htps://gitlab.com/tsoding/porth)\n; This should fall under fair use as defined by the MIT licence used by Tsoding\n");
     file.write(b"iprint:\n");
     file.write(b"    mov     r9, -3689348814741910323\n");
