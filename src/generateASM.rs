@@ -87,22 +87,26 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    pop rsi\n");
                 file.write(b"    syscall\n\n");
             }
-            TokType::IREAD => {
-                /*
-                rax = 0
-                rdi = 0
-                rsi = intBuf
-                rdx = inCount (20 max)
-                 */
-                file.write(b"    ; -- READ INT -- \n");
-                file.write(b"    mov rax, 0\n");
-                file.write(b"    mov rdi, 0\n");
-                file.write(b"    mov rsi, intBuf\n");
-                file.write(b"    mov rdx, 20\n");
-                file.write(b"    syscall\n");
-                file.write(b"    mov rax, intBuf\n");
-                file.write(b"    push rax\n\n");
-            }
+           TokType::IREAD => {
+               file.write(b"    ; -- READ INT -- \n");
+               file.write(b"    mov rax, 0\n");
+               file.write(b"    mov rdi, 0\n");
+               file.write(b"    mov rsi, intBuf\n");
+               file.write(b"    mov rdx, 20\n");
+               file.write(b"    syscall\n");
+
+               file.write(b"    mov rcx, rax      ; Save length of input\n");
+               file.write(b"    mov rbx, 0\n");
+               file.write(b"    mov bl, byte [intBuf+rcx-1]\n");
+               file.write(b"    cmp bl, 10        ; Check for newline\n");
+               file.write(b"    jne .skip_newline\n");
+               file.write(b"    mov byte [intBuf+rcx-1], 0  ; Replace newline with null\n");
+               file.write(b"    dec rcx           ; Adjust length\n");
+               file.write(b".skip_newline:\n");
+               file.write(b"    mov rsi, intBuf   ; Source string\n");
+               file.write(b"    call atoi         ; Convert to integer\n");
+               file.write(b"    push rax          ; Push the integer value\n\n");
+}
             TokType::SREAD => {
                 file.write(b"    ; -- READ STR --\n");
                 file.write(b"    NOT IMPLEMENTED\n\n");
@@ -166,9 +170,49 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    add     rsp, 40\n");
     file.write(b"    ret\n\n");
 
+    file.write(b"atoi:\n");
+    file.write(b"    xor rax, rax         ; Initialize result to 0\n");
+    file.write(b"    xor rcx, rcx         ; Initialize index to 0\n");
+    file.write(b"    xor rbx, rbx         ; Initialize temporary\n");
+    file.write(b"    mov rdx, 10          ; Base 10\n");
+    file.write(b"    \n");
+    file.write(b"    ; Check for negative sign\n");
+    file.write(b"    mov bl, byte [rsi]    ; Get first character\n");
+    file.write(b"    cmp bl, '-'          ; Is it negative?\n");
+    file.write(b"    jne .atoi_loop       ; If not, start conversion\n");
+    file.write(b"    inc rsi              ; Skip the negative sign\n");
+    file.write(b"    push 1               ; Remember it was negative\n");
+    file.write(b"    jmp .atoi_loop_start\n");
+    file.write(b"    \n");
+    file.write(b".atoi_loop:\n");
+    file.write(b"    push 0               ; Not negative\n");
+    file.write(b".atoi_loop_start:\n");
+    file.write(b"    mov bl, byte [rsi+rcx] ; Get next character\n");
+    file.write(b"    cmp bl, 0            ; Check for null terminator\n");
+    file.write(b"    je .atoi_done        ; If null, we're done\n");
+    file.write(b"    cmp bl, '0'          ; Check if below '0'\n");
+    file.write(b"    jl .atoi_done        ; If below '0', we're done\n");
+    file.write(b"    cmp bl, '9'          ; Check if above '9'\n");
+    file.write(b"    jg .atoi_done        ; If above '9', we're done\n");
+    file.write(b"    \n");
+    file.write(b"    sub bl, '0'          ; Convert from ASCII to number\n");
+    file.write(b"    imul rax, rdx        ; Multiply result by 10\n");
+    file.write(b"    add rax, rbx         ; Add current digit\n");
+    file.write(b"    \n");
+    file.write(b"    inc rcx              ; Move to next character\n");
+    file.write(b"    jmp .atoi_loop_start\n");
+    file.write(b"    \n");
+    file.write(b".atoi_done:\n");
+    file.write(b"    pop rcx              ; Get the sign flag\n");
+    file.write(b"    cmp rcx, 1           ; Was it negative?\n");
+    file.write(b"    jne .atoi_return     ; If not, return\n");
+    file.write(b"    neg rax              ; If negative, negate result\n");
+    file.write(b".atoi_return:\n");
+    file.write(b"    ret\n\n");
+
     file.write(b"\nsection '.data' writeable\n");
     file.write(b"    formatStr: db \"%s\", 10\n");
-    file.write(b"    intBuf: dq 0\n");
+    file.write(b"    intBuf: times 21 db 0\n");
     file.write(b"    strBuf: db \"\"\n\n");
 
     curStr = 0;
