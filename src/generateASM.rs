@@ -18,6 +18,8 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"extrn printf\n\n");
     file.write(b"_start:\n");
 
+    // Syscalls used are all for x86_64 (64-bit) Linux as defined by: https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md#x86_64-64_bit
+
     for tok in &tokens {
         match tok.typ {
             TokType::INT => {
@@ -81,32 +83,32 @@ pub fn generateASM(tokens: Vec<Token>) {
             }
             TokType::SPRINT => {
                 file.write(b"    ; -- PRINT STR --\n");
-                file.write(b"    mov rax, 1\n");
-                file.write(b"    mov rdi, 1\n");
-                file.write(b"    pop rdx\n");
-                file.write(b"    pop rsi\n");
+                file.write(b"    mov rax, 1   ; write\n");
+                file.write(b"    mov rdi, 1   ; stdout\n");
+                file.write(b"    pop rdx      ; count\n");
+                file.write(b"    pop rsi      ; buf\n");
                 file.write(b"    syscall\n\n");
             }
-           TokType::IREAD => {
-               file.write(b"    ; -- READ INT -- \n");
-               file.write(b"    mov rax, 0\n");
-               file.write(b"    mov rdi, 0\n");
-               file.write(b"    mov rsi, intBuf\n");
-               file.write(b"    mov rdx, 20\n");
-               file.write(b"    syscall\n");
+            TokType::IREAD => {
+                file.write(b"    ; -- READ INT -- \n");
+                file.write(b"    mov rax, 0      ; read\n");
+                file.write(b"    mov rdi, 0      ; stdin\n");
+                file.write(b"    mov rsi, intBuf ; buf\n");
+                file.write(b"    mov rdx, 20     ; count\n");
+                file.write(b"    syscall\n");
 
-               file.write(b"    mov rcx, rax      ; Save length of input\n");
-               file.write(b"    mov rbx, 0\n");
-               file.write(b"    mov bl, byte [intBuf+rcx-1]\n");
-               file.write(b"    cmp bl, 10        ; Check for newline\n");
-               file.write(b"    jne .skip_newline\n");
-               file.write(b"    mov byte [intBuf+rcx-1], 0  ; Replace newline with null\n");
-               file.write(b"    dec rcx           ; Adjust length\n");
-               file.write(b".skip_newline:\n");
-               file.write(b"    mov rsi, intBuf   ; Source string\n");
-               file.write(b"    call atoi         ; Convert to integer\n");
-               file.write(b"    push rax          ; Push the integer value\n\n");
-           }
+                file.write(b"    mov rcx, rax      ; Save length of input\n");
+                file.write(b"    mov rbx, 0\n");
+                file.write(b"    mov bl, byte [intBuf+rcx-1]\n");
+                file.write(b"    cmp bl, 10        ; Check for newline\n");
+                file.write(b"    jne .skip_newline\n");
+                file.write(b"    mov byte [intBuf+rcx-1], 0  ; Replace newline with null\n");
+                file.write(b"    dec rcx           ; Adjust length\n");
+                file.write(b".skip_newline:\n");
+                file.write(b"    mov rsi, intBuf   ; Source string\n");
+                file.write(b"    call atoi         ; Convert to integer\n");
+                file.write(b"    push rax          ; Push the integer value\n\n");
+            }
             TokType::SREAD => {
                 file.write(b"    ; -- READ STR --\n");
                 file.write(b"    NOT IMPLEMENTED\n\n");
