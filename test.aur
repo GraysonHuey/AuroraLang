@@ -1,1 +1,1 @@
-"Hello, world!" sprint 123 iprint
+"Enter a number:" sprint iread iprint

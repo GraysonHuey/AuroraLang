@@ -56,12 +56,18 @@ fn main() {
 
     generateASM(tokens);
 
-    command("fasm", &["output.asm"]);
+    if !command("fasm", &["output.asm"]) {
+        eprintln!("{RED}[ERROR]: Assembly failed!{RESET}");
+        process::exit(1);
+    }
 
     let mut output_name: String = env::args().nth(2).unwrap_or_else(|| {"output".to_string()});
     if debugFlags.contains(&output_name) { output_name = "output".to_string(); }
 
-    command("ld", &["output.o", "-o", output_name.as_str(), "-lc"]);
+    if !command("ld", &["output.o", "-o", output_name.as_str(), "-lc"]) {
+        eprintln!("{RED}[ERROR]: Linking failed!{RESET}");
+        process::exit(1);
+    }
 
     println!("{GREEN}{BOLD}{file_name} successfully compiled!{RESET}");
 }

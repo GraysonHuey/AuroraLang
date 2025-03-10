@@ -17,6 +17,8 @@ pub enum TokType {
     MOD,
     IPRINT,
     SPRINT,
+    IREAD,
+    SREAD,
     SWAP,
     ROT,
     END,
@@ -84,6 +86,8 @@ pub fn tokenize(source: &String) -> Vec<Token> {
             "sprint" => { tokens.push(Token::new(TokType::SPRINT, 0, "".to_string())); }
             "swap"   => { tokens.push(Token::new(TokType::SWAP,   0, "".to_string())); }
             "rot"    => { tokens.push(Token::new(TokType::ROT,    0, "".to_string())); }
+            "iread"  => { tokens.push(Token::new(TokType::IREAD,  0, "".to_string())); }
+            "sread"  => { tokens.push(Token::new(TokType::SREAD,  0, "".to_string())); }
             _        => {
                 if utils::is_int(string) {
                     let val: i32 = FromStr::from_str(string).unwrap();

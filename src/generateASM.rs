@@ -87,6 +87,26 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    pop rsi\n");
                 file.write(b"    syscall\n\n");
             }
+            TokType::IREAD => {
+                /*
+                rax = 0
+                rdi = 0
+                rsi = intBuf
+                rdx = inCount (20 max)
+                 */
+                file.write(b"    ; -- READ INT -- \n");
+                file.write(b"    mov rax, 0\n");
+                file.write(b"    mov rdi, 0\n");
+                file.write(b"    mov rsi, intBuf\n");
+                file.write(b"    mov rdx, 20\n");
+                file.write(b"    syscall\n");
+                file.write(b"    mov rax, intBuf\n");
+                file.write(b"    push rax\n\n");
+            }
+            TokType::SREAD => {
+                file.write(b"    ; -- READ STR --\n");
+                file.write(b"    NOT IMPLEMENTED\n\n");
+            }
             TokType::SWAP => {
                 file.write(b"    ; -- SWAP --\n");
                 file.write(b"    pop rax\n");
@@ -147,7 +167,9 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    ret\n\n");
 
     file.write(b"\nsection '.data' writeable\n");
-    file.write(b"    formatStr: db \"%s\", 10\n\n");
+    file.write(b"    formatStr: db \"%s\", 10\n");
+    file.write(b"    intBuf: dq 0\n");
+    file.write(b"    strBuf: db \"\"\n\n");
 
     curStr = 0;
     for string in strings {
