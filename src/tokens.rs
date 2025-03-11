@@ -67,6 +67,32 @@ fn splitSource(source: &String) -> Vec<String> {
     result
 }
 
+fn process_escape_sequences(s: &str) -> String {
+    let mut result = String::new();
+    let mut chars = s.chars().peekable();
+
+    while let Some(c) = chars.next() {
+        if c == '\\' && chars.peek().is_some() {
+            match chars.next().unwrap() {
+                'n' => result.push('\n'),
+                't' => result.push('\t'),
+                'r' => result.push('\r'),
+                '\\' => result.push('\\'),
+                '"' => result.push('"'),
+                '0' => result.push('\0'),
+                c => {
+                    result.push('\\');
+                    result.push(c);
+                }
+            }
+        } else {
+            result.push(c);
+        }
+    }
+
+    result
+}
+
 pub fn tokenize(source: &String) -> Vec<Token> {
     let split_str: Vec<String> = splitSource(&source);
 
@@ -111,8 +137,8 @@ pub fn tokenize(source: &String) -> Vec<Token> {
                             isUnfinished = false;
                             unfinishedStr.push_str(&advanced[..location]);
 
-                            let completedStr = unfinishedStr.clone();
-                            tokens.push(Token::new(TokType::STR, completedStr.len().try_into().unwrap(), completedStr));
+                            let processed_str = process_escape_sequences(&unfinishedStr);
+                            tokens.push(Token::new(TokType::STR, processed_str.len().try_into().unwrap(), processed_str));
 
                             unfinishedStr.clear();
                         }

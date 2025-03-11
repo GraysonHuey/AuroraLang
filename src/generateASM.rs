@@ -111,7 +111,24 @@ pub fn generateASM(tokens: Vec<Token>) {
             }
             TokType::SREAD => {
                 file.write(b"    ; -- READ STR --\n");
-                file.write(b"    NOT IMPLEMENTED\n\n");
+                file.write(b"    ; -- READ STR --\n");
+                file.write(b"    mov rax, 0      ; read\n");
+                file.write(b"    mov rdi, 0      ; stdin\n");
+                file.write(b"    mov rsi, strBuf ; buf\n");
+                file.write(b"    mov rdx, 1024   ; count\n");
+                file.write(b"    syscall\n");
+
+                file.write(b"    mov rcx, rax      ; Save length of input\n");
+                file.write(b"    mov rbx, 0\n");
+                file.write(b"    mov bl, byte [strBuf+rcx-1]\n");
+                file.write(b"    cmp bl, 10        ; Check for newline\n");
+                file.write(b"    jne .continue_sread\n");
+                file.write(b"    dec rcx           ; Don't include newline in length\n");
+                file.write(b".continue_sread:\n");
+                file.write(b"    mov rax, strBuf   ; Get buffer address\n");
+                file.write(b"    push rax          ; Push string address\n");
+                file.write(b"    mov rax, rcx      ; Get string length\n");
+                file.write(b"    push rax          ; Push string length\n\n");
             }
             TokType::SWAP => {
                 file.write(b"    ; -- SWAP --\n");
@@ -216,13 +233,24 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"\nsection '.data' writeable\n");
     file.write(b"    formatStr: db \"%s\", 10\n");
     file.write(b"    intBuf: times 21 db 0\n");
-    file.write(b"    strBuf: db \"\"\n\n");
+    file.write(b"    strBuf: times 1024 db 0\n\n");
 
     curStr = 0;
     for string in strings {
-        let name = format!("    str{curStr}: db \"{0}\", 10, 0\n", string.clone());
+        let name = format!("    str{}: db ", curStr);
         file.write(name.as_bytes());
-        let length = format!("    str{curStr}_len = $ - str{curStr}\n");
+
+        for (i, c) in string.bytes().enumerate() {
+            if i > 0 {
+                file.write(b", ");
+            }
+            let byte = format!("{}", c);
+            file.write(byte.as_bytes());
+        }
+
+        file.write(b", 0\n");
+
+        let length = format!("    str{}_len = $ - str{}\n", curStr, curStr);
         file.write(length.as_bytes());
         curStr += 1;
     }
