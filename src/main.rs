@@ -8,7 +8,7 @@ use std::path::Path;
 mod utils;
 mod tokens;
 mod generateASM;
-use utils::{BOLD, RED, GREEN, RESET, command, DEBUG, log};
+use utils::{BOLD, RED, GREEN, RESET, command, DEBUG};
 use tokens::{Token, TokType, tokenize};
 use generateASM::generateASM;
 
@@ -49,7 +49,7 @@ fn main() {
     unsafe {
         if DEBUG {
             for tok in &tokens {
-                log("{tok:?}");
+                println!("[LOG]: {tok:?}");
             }
         }
     }
@@ -67,6 +67,12 @@ fn main() {
     if !command("ld", &["output.o", "-o", output_name.as_str(), "-lc"]) {
         eprintln!("{RED}[ERROR]: Linking failed!{RESET}");
         process::exit(1);
+    }
+
+    unsafe {
+        if DEBUG {
+            command("rm", &["output.asm", "output.o"]);
+        }
     }
 
     println!("{GREEN}{BOLD}{file_name} successfully compiled!{RESET}");
