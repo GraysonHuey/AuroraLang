@@ -50,7 +50,7 @@ fn splitSource(source: &String) -> Vec<String> {
         if c == '"' {
             in_string = !in_string;
             current_token.push(c);
-        } else if c == ' ' && !in_string {
+        } else if (c == ' ' || c == '\n' || c == '\r') && !in_string {
             if !current_token.is_empty() {
                 result.push(current_token);
                 current_token = String::new();
