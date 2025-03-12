@@ -1,0 +1,3 @@
+"Enter a number: " sprint
+iread 5 +
+"Your number + 5 = " sprint iprint
