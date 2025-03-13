@@ -16,9 +16,12 @@ pub enum TokType {
     DIV,
     MOD,
     IPRINT,
+    IPRINTLN,
     SPRINT,
+    SPRINTLN,
     IREAD,
     SREAD,
+    DUP,
     SWAP,
     ROT,
     END,
@@ -109,7 +112,10 @@ pub fn tokenize(source: &String) -> Vec<Token> {
             "/"      => { tokens.push(Token::new(TokType::DIV,    0, "".to_string())); }
             "%"      => { tokens.push(Token::new(TokType::MOD,    0, "".to_string())); }
             "iprint" => { tokens.push(Token::new(TokType::IPRINT, 0, "".to_string())); }
+            "iprintln" => { tokens.push(Token::new(TokType::IPRINTLN, 0, "".to_string())); }
             "sprint" => { tokens.push(Token::new(TokType::SPRINT, 0, "".to_string())); }
+            "sprintln" => { tokens.push(Token::new(TokType::SPRINTLN, 0, "".to_string())); }
+            "dup"    => { tokens.push(Token::new(TokType::DUP,    0, "".to_string())); }
             "swap"   => { tokens.push(Token::new(TokType::SWAP,   0, "".to_string())); }
             "rot"    => { tokens.push(Token::new(TokType::ROT,    0, "".to_string())); }
             "iread"  => { tokens.push(Token::new(TokType::IREAD,  0, "".to_string())); }

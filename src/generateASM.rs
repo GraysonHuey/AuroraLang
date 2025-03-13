@@ -62,16 +62,16 @@ pub fn generateASM(tokens: Vec<Token>) {
             }
             TokType::DIV => {
                 file.write(b"    ; -- DIV --\n");
-                file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
+                file.write(b"    pop rax\n");
                 file.write(b"    xor rdx, rdx\n");
                 file.write(b"    idiv rbx\n");
                 file.write(b"    push rax\n\n");
             }
             TokType::MOD => {
                 file.write(b"    ; -- MOD --\n");
-                file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
+                file.write(b"    pop rax\n");
                 file.write(b"    xor rdx, rdx\n");
                 file.write(b"    idiv rbx\n");
                 file.write(b"    push rdx\n\n");
@@ -81,12 +81,27 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    pop rdi\n");
                 file.write(b"    call iprint\n\n");
             }
+            TokType::IPRINTLN => {
+                file.write(b"    ; -- PRINT INT NEWLN -- \n");
+                file.write(b"    pop rdi\n");
+                file.write(b"    call iprintln\n\n");
+            }
             TokType::SPRINT => {
                 file.write(b"    ; -- PRINT STR --\n");
                 file.write(b"    mov rax, 1   ; write\n");
                 file.write(b"    mov rdi, 1   ; stdout\n");
                 file.write(b"    pop rdx      ; count\n");
                 file.write(b"    pop rsi      ; buf\n");
+                file.write(b"    syscall\n\n");
+            }
+            TokType::SPRINTLN => {
+                file.write(b"    ; -- PRINT STR NEWLN --\n");
+                file.write(b"    mov rax, 1              ; write\n");
+                file.write(b"    mov rdi, 1              ; stdout\n");
+                file.write(b"    pop rdx                 ; count\n");
+                file.write(b"    pop rsi                 ; buf\n");
+                file.write(b"    mov BYTE [rsi+rdx], 10  ; Add newline to the end of the string\n");
+                file.write(b"    inc rdx                 ; Add one to length (because of the added newline)\n");
                 file.write(b"    syscall\n\n");
             }
             TokType::IREAD => {
@@ -111,7 +126,6 @@ pub fn generateASM(tokens: Vec<Token>) {
             }
             TokType::SREAD => {
                 file.write(b"    ; -- READ STR --\n");
-                file.write(b"    ; -- READ STR --\n");
                 file.write(b"    mov rax, 0      ; read\n");
                 file.write(b"    mov rdi, 0      ; stdin\n");
                 file.write(b"    mov rsi, strBuf ; buf\n");
@@ -129,6 +143,12 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    push rax          ; Push string address\n");
                 file.write(b"    mov rax, rcx      ; Get string length\n");
                 file.write(b"    push rax          ; Push string length\n\n");
+            }
+            TokType::DUP => {
+                file.write(b"    ; -- DUP -- \n");
+                file.write(b"    pop rax\n");
+                file.write(b"    push rax\n");
+                file.write(b"    push rax\n\n");
             }
             TokType::SWAP => {
                 file.write(b"    ; -- SWAP --\n");
@@ -156,10 +176,43 @@ pub fn generateASM(tokens: Vec<Token>) {
     }
 
     file.write(b"; CREDITS TO TSODING FOR THE PRINT FUNCTION (htps://gitlab.com/tsoding/porth)\n; This should fall under fair use as defined by the MIT licence used by Tsoding\n");
-    file.write(b"iprint:\n");
+    file.write(b"iprintln:\n");
     file.write(b"    mov     r9, -3689348814741910323\n");
     file.write(b"    sub     rsp, 40\n");
     file.write(b"    mov     BYTE [rsp+31], 10\n");
+    file.write(b"    lea     rcx, [rsp+30]\n");
+    file.write(b".L2:\n");
+    file.write(b"    mov     rax, rdi\n");
+    file.write(b"    lea     r8, [rsp+32]\n");
+    file.write(b"    mul     r9\n");
+    file.write(b"    mov     rax, rdi\n");
+    file.write(b"    sub     r8, rcx\n");
+    file.write(b"    shr     rdx, 3\n");
+    file.write(b"    lea     rsi, [rdx+rdx*4]\n");
+    file.write(b"    add     rsi, rsi\n");
+    file.write(b"    sub     rax, rsi\n");
+    file.write(b"    add     eax, 48\n");
+    file.write(b"    mov     BYTE [rcx], al\n");
+    file.write(b"    mov     rax, rdi\n");
+    file.write(b"    mov     rdi, rdx\n");
+    file.write(b"    mov     rdx, rcx\n");
+    file.write(b"    sub     rcx, 1\n");
+    file.write(b"    cmp     rax, 9\n");
+    file.write(b"    ja      .L2\n");
+    file.write(b"    lea     rax, [rsp+32]\n");
+    file.write(b"    mov     edi, 1\n");
+    file.write(b"    sub     rdx, rax\n");
+    file.write(b"    xor     eax, eax\n");
+    file.write(b"    lea     rsi, [rsp+32+rdx]\n");
+    file.write(b"    mov     rdx, r8\n");
+    file.write(b"    mov     rax, 1\n");
+    file.write(b"    syscall\n");
+    file.write(b"    add     rsp, 40\n");
+    file.write(b"    ret\n\n");
+
+    file.write(b"iprint:\n");
+    file.write(b"    mov     r9, -3689348814741910323\n");
+    file.write(b"    sub     rsp, 40\n");
     file.write(b"    lea     rcx, [rsp+30]\n");
     file.write(b".L2:\n");
     file.write(b"    mov     rax, rdi\n");
@@ -197,16 +250,14 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    mov rdx, 10          ; Base 10\n");
     file.write(b"    \n");
     file.write(b"    ; Check for negative sign\n");
-    file.write(b"    mov bl, byte [rsi]    ; Get first character\n");
+    file.write(b"    mov r8, 0            ; Initialize sign flag to 0 (positive)\n");
+    file.write(b"    mov bl, byte [rsi]   ; Get first character\n");
     file.write(b"    cmp bl, '-'          ; Is it negative?\n");
     file.write(b"    jne .atoi_loop       ; If not, start conversion\n");
     file.write(b"    inc rsi              ; Skip the negative sign\n");
-    file.write(b"    push 1               ; Remember it was negative\n");
-    file.write(b"    jmp .atoi_loop_start\n");
+    file.write(b"    mov r8, 1            ; Set sign flag to 1 (negative)\n");
     file.write(b"    \n");
     file.write(b".atoi_loop:\n");
-    file.write(b"    push 0               ; Not negative\n");
-    file.write(b".atoi_loop_start:\n");
     file.write(b"    mov bl, byte [rsi+rcx] ; Get next character\n");
     file.write(b"    cmp bl, 0            ; Check for null terminator\n");
     file.write(b"    je .atoi_done        ; If null, we're done\n");
@@ -220,15 +271,15 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    add rax, rbx         ; Add current digit\n");
     file.write(b"    \n");
     file.write(b"    inc rcx              ; Move to next character\n");
-    file.write(b"    jmp .atoi_loop_start\n");
+    file.write(b"    jmp .atoi_loop\n");
     file.write(b"    \n");
     file.write(b".atoi_done:\n");
-    file.write(b"    pop rcx              ; Get the sign flag\n");
-    file.write(b"    cmp rcx, 1           ; Was it negative?\n");
+    file.write(b"    cmp r8, 1            ; Was it negative?\n");
     file.write(b"    jne .atoi_return     ; If not, return\n");
     file.write(b"    neg rax              ; If negative, negate result\n");
     file.write(b".atoi_return:\n");
-    file.write(b"    ret\n\n");
+    file.write(b"    ret\n");
+
 
     file.write(b"\nsection '.data' writeable\n");
     file.write(b"    formatStr: db \"%s\", 10\n");

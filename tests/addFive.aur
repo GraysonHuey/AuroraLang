@@ -1,0 +1,4 @@
+"Enter a number: " sprint
+iread dup
+iprint " + 5 = " sprint
+5 + iprintln
