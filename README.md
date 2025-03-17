@@ -1,4 +1,4 @@
-# Aurora Compiler
+# Welcome to the Aurora Programming Language!
 
 A compiler for the Aurora stack-based programming language that generates x86-64 assembly code.
 
