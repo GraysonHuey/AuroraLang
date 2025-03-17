@@ -1,7 +1,5 @@
 # Welcome to the Aurora Programming Language!
 
-A compiler for the Aurora stack-based programming language that generates x86-64 assembly code.
-
 ## Overview
 
 This project is a compiler that translates programs written in Aurora (a simple stack-based language) into x86-64 assembly code that can be assembled and linked into executable binaries. The compiler is written in Rust and is designed to be a learning tool for understanding how programming languages and compilers work.
