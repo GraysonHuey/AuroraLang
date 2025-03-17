@@ -60,7 +60,7 @@ Aurora is a simple stack-based language with the following operations:
 - `iprintln`: Prints the top value from the stack as an integer followed by a newline
 - `sprint`: Prints a string value
 - `sprintln`: Prints a string value followed by a newline
-- `iread`: Reads an integer from standard input and pushes it onto the stack
+- `iread`: Reads an UNSIGNED integer from standard input and pushes it onto the stack (currently working on implementing signedness on iread)
 - `sread`: Reads a string from standard input and pushes it onto the stack
 
 ### Constants
