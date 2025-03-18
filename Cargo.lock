@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "Aurorust"
+name = "AuroraLang"
 version = "0.1.0"
