@@ -70,7 +70,7 @@ fn main() {
     }
 
     unsafe {
-        if DEBUG {
+        if !DEBUG {
             command("rm", &["output.asm", "output.o"]);
         }
     }

@@ -106,21 +106,21 @@ pub fn tokenize(source: &String) -> Vec<Token> {
 
     for string in &split_str {
         match string.as_str() {
-            "+"      => { tokens.push(Token::new(TokType::ADD,    0, "".to_string())); }
-            "-"      => { tokens.push(Token::new(TokType::SUB,    0, "".to_string())); }
-            "*"      => { tokens.push(Token::new(TokType::MUL,    0, "".to_string())); }
-            "/"      => { tokens.push(Token::new(TokType::DIV,    0, "".to_string())); }
-            "%"      => { tokens.push(Token::new(TokType::MOD,    0, "".to_string())); }
-            "iprint" => { tokens.push(Token::new(TokType::IPRINT, 0, "".to_string())); }
+            "+"        => { tokens.push(Token::new(TokType::ADD,      0, "".to_string())); }
+            "-"        => { tokens.push(Token::new(TokType::SUB,      0, "".to_string())); }
+            "*"        => { tokens.push(Token::new(TokType::MUL,      0, "".to_string())); }
+            "/"        => { tokens.push(Token::new(TokType::DIV,      0, "".to_string())); }
+            "%"        => { tokens.push(Token::new(TokType::MOD,      0, "".to_string())); }
+            "iprint"   => { tokens.push(Token::new(TokType::IPRINT,   0, "".to_string())); }
             "iprintln" => { tokens.push(Token::new(TokType::IPRINTLN, 0, "".to_string())); }
-            "sprint" => { tokens.push(Token::new(TokType::SPRINT, 0, "".to_string())); }
+            "sprint"   => { tokens.push(Token::new(TokType::SPRINT,   0, "".to_string())); }
             "sprintln" => { tokens.push(Token::new(TokType::SPRINTLN, 0, "".to_string())); }
-            "dup"    => { tokens.push(Token::new(TokType::DUP,    0, "".to_string())); }
-            "swap"   => { tokens.push(Token::new(TokType::SWAP,   0, "".to_string())); }
-            "rot"    => { tokens.push(Token::new(TokType::ROT,    0, "".to_string())); }
-            "iread"  => { tokens.push(Token::new(TokType::IREAD,  0, "".to_string())); }
-            "sread"  => { tokens.push(Token::new(TokType::SREAD,  0, "".to_string())); }
-            _        => {
+            "dup"      => { tokens.push(Token::new(TokType::DUP,      0, "".to_string())); }
+            "swap"     => { tokens.push(Token::new(TokType::SWAP,     0, "".to_string())); }
+            "rot"      => { tokens.push(Token::new(TokType::ROT,      0, "".to_string())); }
+            "iread"    => { tokens.push(Token::new(TokType::IREAD,    0, "".to_string())); }
+            "sread"    => { tokens.push(Token::new(TokType::SREAD,    0, "".to_string())); }
+            _          => {
                 if utils::is_int(string) {
                     let val: i32 = FromStr::from_str(string).unwrap();
                     tokens.push(Token::new(TokType::INT, val, "".to_string()));
