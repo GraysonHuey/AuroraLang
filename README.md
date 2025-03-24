@@ -110,4 +110,4 @@ The integer printing functionality in the assembly output is based on code by Ts
 
 ## License
 
-This project is open-source software.
+This project is open-source software. Refer to the [LICENSE](https://github.com/GraysonHuey/AuroraLang/blob/main/LICENSE) to see the terms.
