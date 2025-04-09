@@ -24,6 +24,9 @@ pub enum TokType {
     DUP,
     SWAP,
     ROT,
+    IF,
+    ENDIF,
+    GT,
     END,
 }
 
@@ -120,6 +123,9 @@ pub fn tokenize(source: &String) -> Vec<Token> {
             "rot"      => { tokens.push(Token::new(TokType::ROT,      0, "".to_string())); }
             "iread"    => { tokens.push(Token::new(TokType::IREAD,    0, "".to_string())); }
             "sread"    => { tokens.push(Token::new(TokType::SREAD,    0, "".to_string())); }
+            "if"       => { tokens.push(Token::new(TokType::IF,       0, "".to_string())); }
+            "endif"    => { tokens.push(Token::new(TokType::ENDIF,    0, "".to_string())); }
+            ">"        => { tokens.push(Token::new(TokType::GT,       0, "".to_string())); }
             _          => {
                 if utils::is_int(string) {
                     let val: i32 = FromStr::from_str(string).unwrap();

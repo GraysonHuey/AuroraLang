@@ -12,6 +12,10 @@ pub fn generateASM(tokens: Vec<Token>) {
     let mut strings: Vec<String> = Vec::new();
     let mut curStr: u32 = 0;
 
+    let mut curIf: u32 = 0;
+
+    let mut curIread: u32 = 0;
+
     file.write(b"format ELF64\n\n");
     file.write(b"section '.text' executable\n");
     file.write(b"public _start\n\n");
@@ -52,7 +56,7 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    pop rax\n");
                 file.write(b"    sub rax, rbx\n");
                 file.write(b"    push rax\n\n");
-            }
+           }
             TokType::MUL => {
                 file.write(b"    ; -- MUL --\n");
                 file.write(b"    pop rax\n");
@@ -109,20 +113,30 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    mov rax, 0      ; read\n");
                 file.write(b"    mov rdi, 0      ; stdin\n");
                 file.write(b"    mov rsi, intBuf ; buf\n");
-                file.write(b"    mov rdx, 20     ; count\n");
+                file.write(b"    mov rdx, 1024   ; count\n");
                 file.write(b"    syscall\n");
 
                 file.write(b"    mov rcx, rax      ; Save length of input\n");
                 file.write(b"    mov rbx, 0\n");
                 file.write(b"    mov bl, byte [intBuf+rcx-1]\n");
                 file.write(b"    cmp bl, 10        ; Check for newline\n");
-                file.write(b"    jne .skip_newline\n");
+                let skip = format!("    jne .skip_newline{curIread}\n");
+                file.write(skip.as_bytes());
                 file.write(b"    mov byte [intBuf+rcx-1], 0  ; Replace newline with null\n");
                 file.write(b"    dec rcx           ; Adjust length\n");
-                file.write(b".skip_newline:\n");
+                let label = format!(".skip_newline{curIread}:\n");
+                file.write(label.as_bytes());
                 file.write(b"    mov rsi, intBuf   ; Source string\n");
                 file.write(b"    call atoi         ; Convert to integer\n");
+                file.write(b"    mov bl, byte [intBuf]\n");
+                file.write(b"    cmp bl, 45\n");
+                let neg = format!("    jne .skip_negative{curIread}\n");
+                file.write(neg.as_bytes());
+                file.write(b"    neg rax\n");
+                let negLabel = format!(".skip_negative{curIread}:\n");
+                file.write(negLabel.as_bytes());
                 file.write(b"    push rax          ; Push the integer value\n\n");
+                curIread += 1;
             }
             TokType::SREAD => {
                 file.write(b"    ; -- READ STR --\n");
@@ -165,6 +179,31 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    push rbx\n");
                 file.write(b"    push rax\n");
                 file.write(b"    push rcx\n\n");
+            }
+            // TODO: The current implementation of if statements will break upon using nested ifs
+            TokType::IF => {
+                let ifTxt = format!("    ; -- IF #{curIf}\n");
+                file.write(ifTxt.as_bytes());
+                file.write(b"    pop rax\n");
+                file.write(b"    cmp rax, 1");
+                let ifJmp = format!("    je if{curIf}\n");
+                file.write(ifJmp.as_bytes());
+                let elseJmp = format!("    jmp endIf{curIf}\n");
+                file.write(elseJmp.as_bytes());
+                let ifLbl = format!(".if{curIf}\n");
+                file.write(ifLbl.as_bytes());
+            }
+            TokType::ENDIF => {
+                let endIf = format!(".endIf{curIf}\n");
+                file.write(endIf.as_bytes());
+                curIf += 1;
+            }
+            TokType::GT => {
+                file.write(b"    ; -- GT --\n");
+                file.write(b"    pop rax\n");
+                file.write(b"    pop rbx\n");
+                file.write(b"    call gt\n");
+                file.write(b"    push rbx\n");
             }
             TokType::END => {
                 file.write(b"    ; EXIT\n");
@@ -278,12 +317,21 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    jne .atoi_return     ; If not, return\n");
     file.write(b"    neg rax              ; If negative, negate result\n");
     file.write(b".atoi_return:\n");
-    file.write(b"    ret\n");
+    file.write(b"    ret\n\n");
 
+    file.write(b"gt:\n");
+    file.write(b"    cmp rax, rbx\n");
+    file.write(b"    jl .true\n");
+    file.write(b"    mov rbx, 0\n");
+    file.write(b"    jmp .end\n");
+    file.write(b".true:\n");
+    file.write(b"    mov rbx, 1\n");
+    file.write(b".end:\n");
+    file.write(b"    ret\n");
 
     file.write(b"\nsection '.data' writeable\n");
     file.write(b"    formatStr: db \"%s\", 10\n");
-    file.write(b"    intBuf: times 21 db 0\n");
+    file.write(b"    intBuf: times 1024 db 0\n");
     file.write(b"    strBuf: times 1024 db 0\n\n");
 
     curStr = 0;
