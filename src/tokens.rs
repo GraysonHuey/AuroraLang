@@ -28,6 +28,7 @@ pub enum TokType {
     ENDIF,
     GT,
     LT,
+    EQ,
     END,
 }
 
@@ -128,6 +129,7 @@ pub fn tokenize(source: &String) -> Vec<Token> {
             "endif"    => { tokens.push(Token::new(TokType::ENDIF,    0, "".to_string())); }
             ">"        => { tokens.push(Token::new(TokType::GT,       0, "".to_string())); }
             "<"        => { tokens.push(Token::new(TokType::LT,       0, "".to_string())); }
+            "="        => { tokens.push(Token::new(TokType::EQ,       0, "".to_string())); }
             _          => {
                 if utils::is_int(string) {
                     let val: i32 = FromStr::from_str(string).unwrap();

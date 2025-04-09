@@ -185,16 +185,16 @@ pub fn generateASM(tokens: Vec<Token>) {
                 let ifTxt = format!("    ; -- IF #{curIf}\n");
                 file.write(ifTxt.as_bytes());
                 file.write(b"    pop rax\n");
-                file.write(b"    cmp rax, 1");
-                let ifJmp = format!("    je if{curIf}\n");
+                file.write(b"    cmp rax, 1\n");
+                let ifJmp = format!("    je .if{curIf}\n");
                 file.write(ifJmp.as_bytes());
-                let elseJmp = format!("    jmp endIf{curIf}\n");
+                let elseJmp = format!("    jmp .endIf{curIf}\n");
                 file.write(elseJmp.as_bytes());
-                let ifLbl = format!(".if{curIf}\n");
+                let ifLbl = format!(".if{curIf}:\n");
                 file.write(ifLbl.as_bytes());
             }
             TokType::ENDIF => {
-                let endIf = format!(".endIf{curIf}\n");
+                let endIf = format!(".endIf{curIf}:\n");
                 file.write(endIf.as_bytes());
                 curIf += 1;
             }
@@ -210,6 +210,13 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
                 file.write(b"    call lt\n");
+                file.write(b"    push rbx\n");
+            }
+            TokType::EQ => {
+                file.write(b"    ; -- EQ --\n");
+                file.write(b"    pop rax\n");
+                file.write(b"    pop rbx\n");
+                file.write(b"    call equal\n");
                 file.write(b"    push rbx\n");
             }
             TokType::END => {
@@ -343,6 +350,16 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    jmp .end\n");
     file.write(b".false:\n");
     file.write(b"    mov rbx, 0\n");
+    file.write(b".end:\n");
+    file.write(b"    ret\n");
+
+    file.write(b"equal:\n");
+    file.write(b"    cmp rax, rbx\n");
+    file.write(b"    je .true\n");
+    file.write(b"    mov rbx, 0\n");
+    file.write(b"    jmp .end\n");
+    file.write(b".true:\n");
+    file.write(b"    mov rbx, 1\n");
     file.write(b".end:\n");
     file.write(b"    ret\n");
 
