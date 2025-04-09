@@ -6,5 +6,5 @@ edition = "2021"
 [dependencies]
 
 [[bin]]
-name = "AuroraLang"
+name = "aurora"
 path = "src/main.rs"
