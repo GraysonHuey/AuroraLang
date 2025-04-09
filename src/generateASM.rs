@@ -205,6 +205,13 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    call gt\n");
                 file.write(b"    push rbx\n");
             }
+            TokType::LT => {
+                file.write(b"    ; -- LT --\n");
+                file.write(b"    pop rax\n");
+                file.write(b"    pop rbx\n");
+                file.write(b"    call lt\n");
+                file.write(b"    push rbx\n");
+            }
             TokType::END => {
                 file.write(b"    ; EXIT\n");
                 file.write(b"    mov rax, 60\n");
@@ -326,6 +333,16 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    jmp .end\n");
     file.write(b".true:\n");
     file.write(b"    mov rbx, 1\n");
+    file.write(b".end:\n");
+    file.write(b"    ret\n");
+
+    file.write(b"lt:\n");
+    file.write(b"    cmp rax, rbx\n");
+    file.write(b"    jl .false\n");
+    file.write(b"    mov rbx, 1\n");
+    file.write(b"    jmp .end\n");
+    file.write(b".false:\n");
+    file.write(b"    mov rbx, 0\n");
     file.write(b".end:\n");
     file.write(b"    ret\n");
 

@@ -1,0 +1,4 @@
+"Enter a number: " sprint iread
+"Enter number to check against: " sprint iread
+< "Result: " sprint iprintln
+"1 = Less than, 0 = Greater than or equal" sprintln
