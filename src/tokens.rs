@@ -27,7 +27,9 @@ pub enum TokType {
     IF,
     ENDIF,
     GT,
+    GE,
     LT,
+    LE,
     EQ,
     END,
 }

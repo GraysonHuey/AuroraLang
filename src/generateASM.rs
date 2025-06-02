@@ -205,11 +205,25 @@ pub fn generateASM(tokens: Vec<Token>) {
                 file.write(b"    call gt\n");
                 file.write(b"    push rbx\n");
             }
+            TokType::GE => {
+                file.write(b"    ; -- GE --\n");
+                file.write(b"    pop rax\n");
+                file.write(b"    pop rbx\n");
+                file.write(b"    call ge\n");
+                file.write(b"    push rbx\n");
+            }
             TokType::LT => {
                 file.write(b"    ; -- LT --\n");
                 file.write(b"    pop rax\n");
                 file.write(b"    pop rbx\n");
                 file.write(b"    call lt\n");
+                file.write(b"    push rbx\n");
+            }
+            TokType::LE => {
+                file.write(b"    ; -- LE --\n");
+                file.write(b"    pop rax\n");
+                file.write(b"    pop rbx\n");
+                file.write(b"    call le\n");
                 file.write(b"    push rbx\n");
             }
             TokType::EQ => {
@@ -342,6 +356,16 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"    mov rbx, 1\n");
     file.write(b".end:\n");
     file.write(b"    ret\n");
+
+    file.write(b"ge:\n");
+    file.write(b"    cmp rax, rbx\n");
+    file.write(b"    jl .true\n");
+    file.write(b"    mov rbx, 0\n");
+    file.write(b"    jmp .end\n");
+    file.write(b".tru:\n");
+    file.write(b"    mov rbx, 1\n");
+    file.write(b".end:\n");
+    file.write(b"    ret\n");    
 
     file.write(b"lt:\n");
     file.write(b"    cmp rax, rbx\n");
