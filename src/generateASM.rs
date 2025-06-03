@@ -359,7 +359,7 @@ pub fn generateASM(tokens: Vec<Token>) {
 
     file.write(b"ge:\n");
     file.write(b"    cmp rax, rbx\n");
-    file.write(b"    jl .true\n");
+    file.write(b"    jle .true\n");
     file.write(b"    mov rbx, 0\n");
     file.write(b"    jmp .end\n");
     file.write(b".tru:\n");
@@ -370,6 +370,16 @@ pub fn generateASM(tokens: Vec<Token>) {
     file.write(b"lt:\n");
     file.write(b"    cmp rax, rbx\n");
     file.write(b"    jl .false\n");
+    file.write(b"    mov rbx, 1\n");
+    file.write(b"    jmp .end\n");
+    file.write(b".false:\n");
+    file.write(b"    mov rbx, 0\n");
+    file.write(b".end:\n");
+    file.write(b"    ret\n");
+
+    file.write(b"le:\n");
+    file.write(b"    cmp rax, rbx\n");
+    file.write(b"    jle .false\n");
     file.write(b"    mov rbx, 1\n");
     file.write(b"    jmp .end\n");
     file.write(b".false:\n");
